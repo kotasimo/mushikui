@@ -9,13 +9,17 @@ function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function createQuestion(correctCount: number): Question {
+export function createQuestion(correctCount: number, course?: Course): Question {
   const level = correctCount >= 20 ? 3 : correctCount >= 10 ? 2 : 1;
 
   const ops =
-    level === 1 ? ["+", "-"] :
-    level === 2 ? ["+", "-", "×"] :
-    ["+", "-", "×", "÷"];
+    course?.id === "practice"
+      ? ["+", "-", "×", "÷"]
+      : level === 1
+        ? ["+", "-"]
+        : level === 2
+          ? ["+", "-", "×"]
+          : ["+", "-", "×", "÷"];
 
   const op = ops[Math.floor(Math.random() * ops.length)];
 
