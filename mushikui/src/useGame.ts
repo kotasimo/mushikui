@@ -73,6 +73,17 @@ export function useMushikuiGame() {
     setIsFinished(false);
   }
 
+  function resetPractice() {
+    if (!course) return;
+
+    setTimeLeft(0); // 練習はカウントアップだから0に戻す
+    setCorrectCount(0);
+    setMissCount(0);
+    setInput("");
+    setIsFinished(false);
+    setQuestion(createQuestion(0, course));
+  }
+
   // --- キーボード ---
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -173,5 +184,6 @@ export function useMushikuiGame() {
     submit,
     endGame,
     goHome,
+    resetPractice,
   };
 }

@@ -149,7 +149,7 @@ button {
   font-weight: 900;
   margin-bottom: 24px;
 }
-
+/* 
 .screen {
   display: flex;
   flex-direction: column;
@@ -157,6 +157,15 @@ button {
   justify-content: center;
   height: 100vh;
   gap: 20px;
+  background: #fffdf5;
+  max-width: 1000px;
+  margin: 0 auto;
+} */
+
+.screen {
+  width: min(100%, 720px);
+  min-height: 100vh;
+  margin: 0 auto;
   background: #fffdf5;
 }
 
@@ -172,4 +181,114 @@ button {
   display: flex;
   justify-content: center;
   gap: 40px; /* ← ここで間を調整 */
+}
+
+.game-screen {
+  min-height: 100vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: #fffdf5;
+  width: min(100%, 720px);
+  margin: 0 auto;
+}
+
+.game-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.score-box {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-size: 14px;
+  color: #444;
+}
+
+button {
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 0 #aaa;
+  border-radius: 5px;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #aaa;
+}
+
+button:hover {
+  background: #eee;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.best {
+  font-size: 18px;
+  color: rgb(52, 52, 52);
+  margin: 15px;
+}
+
+.score-box {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.score-text {
+  font-size: 206
+  px;
+  color: black;
+}
+
+.reset-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+  border: 2px solid #000;  /* ← 黒枠しっかり */
+  color: #000;
+
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: none;
+}
+
+.reset-btn:hover {
+  background: #ddd;
+}
+
+.reset-btn:active {
+  transform: scale(0.9);
+}
+
+.input {
+  font-size: 4515
+  px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
 }

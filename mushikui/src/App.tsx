@@ -65,31 +65,35 @@ export default function App() {
     );
   }
 
-
   return (
-    <main className="screen">
-      <div>
-        {game.course?.id === "practice" ? (
-          <div className="status">
-            <div className="timer">
-              <span>{game.timeLeft}秒</span>
-              <span>{game.correctCount + game.missCount}問</span>
-            </div>
-            {/* <div>
-              {game.correctCount} 正解 / {game.missCount} ミス
-            </div> */}
-          </div>
-        ) : (
-          <>
-            <div>{game.timeLeft} 秒</div>
-          </>
+    <main className="game-screen">
+      <div className="score-box">
+        <div className="score-text">
+          {game.correctCount} 正解 / {game.missCount} ミス
+        </div>
+
+        {game.course?.id === "practice" && (
+          <button className="reset-btn" onClick={game.resetPractice}>
+            ↺
+          </button>
         )}
       </div>
 
-      <div className="question">{game.question?.text}</div>
-      <div className="input">{game.input || "_"}</div>
+      <div className="game-center">
+        {game.course?.id === "practice" ? (
+          <div className="timer">
+            <span>{game.timeLeft}秒</span>
+            <span>{game.correctCount + game.missCount}問</span>
+          </div>
+        ) : (
+          <div>{game.timeLeft} 秒</div>
+        )}
 
-      <button onClick={game.endGame}>終了</button>
+        <div className="question">{game.question?.text}</div>
+        <div className="input">{game.input || ""}</div>
+
+        <button onClick={game.endGame}>終了</button>
+      </div>
     </main>
   );
 }
