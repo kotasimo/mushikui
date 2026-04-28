@@ -345,6 +345,7 @@ button:hover {
 
   font-size: 22px;
   color: #111;
+  border: 2px solid black;
 }
 
 .mobile-keypad .key-ok {
