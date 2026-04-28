@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createQuestion, type Question } from "./createQuestion";
 import type { Course } from "./courses";
 
-const BEST_SCORE_KEY = "mushikui_best_score";
+const BEST_SCORES_KEY = "mushikui_best_score";
 
 export function useMushikuiGame() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -13,21 +13,29 @@ export function useMushikuiGame() {
   const [missCount, setMissCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [course, setCourse] = useState<Course | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [isNewBest, setIsNewBest] = useState(false);
 
-  const [bestScore, setBestScore] = useState(() => {
-    return Number(localStorage.getItem(BEST_SCORE_KEY) ?? 0);
+  const [bestScores, setBestScores] = useState<Record<string, number>>(() => {
+    const saved = localStorage.getItem(BEST_SCORES_KEY);
+    return saved ? JSON.parse(saved) : {};
   });
+
+  const bestScore = course ? bestScores[course.id] ?? 0 : 0;
 
   // --- start ---
   function start(selectedCourse: Course) {
     setCourse(selectedCourse);
-    setIsPlaying(true);
     setTimeLeft(selectedCourse.seconds ?? 0);
     setCorrectCount(0);
     setMissCount(0);
     setInput("");
     setIsFinished(false);
     setQuestion(createQuestion(0, selectedCourse));
+
+    setCountdown(3);
+    setIsPlaying(false);
+    setIsNewBest(false);
   }
 
   // --- 入力 ---
@@ -82,6 +90,7 @@ export function useMushikuiGame() {
   }, [isPlaying, isFinished, input, question, correctCount]);
 
   // --- タイマー ---
+  // --- タイマー ---
   useEffect(() => {
     if (!isPlaying || isFinished || !course) return;
 
@@ -96,18 +105,6 @@ export function useMushikuiGame() {
         if (t <= 1) {
           clearInterval(timer);
           setIsFinished(true);
-
-          setBestScore((prev) => {
-            if (correctCount > prev) {
-              localStorage.setItem(
-                BEST_SCORE_KEY,
-                String(correctCount)
-              );
-              return correctCount;
-            }
-            return prev;
-          });
-
           return 0;
         }
 
@@ -116,7 +113,44 @@ export function useMushikuiGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isFinished, correctCount, course]);
+  }, [isPlaying, isFinished, course]);
+
+  // --- ベストスコア保存 ---
+  useEffect(() => {
+    if (!isFinished || !course) return;
+    if (course.id === "practice") return;
+
+    setBestScores((prev) => {
+      const prevBest = prev[course.id] ?? 0;
+
+      if (correctCount <= prevBest) return prev;
+
+      const next = {
+        ...prev,
+        [course.id]: correctCount,
+      };
+
+      localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(next));
+      setIsNewBest(true);
+      return next;
+    });
+  }, [isFinished, course, correctCount]);
+
+  useEffect(() => {
+    if (countdown === null) return;
+
+    if (countdown === 0) {
+      setCountdown(null);
+      setIsPlaying(true);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setCountdown((prev) => (prev === null ? null : prev - 1));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   return {
     // 状態
@@ -128,7 +162,10 @@ export function useMushikuiGame() {
     correctCount,
     missCount,
     bestScore,
+    bestScores,
     course,
+    countdown,
+    isNewBest,
 
     // 操作
     start,

@@ -1,22 +1,26 @@
 import "./App.css";
 import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
+import { NewBestScreen } from "./components/bestScreen";
 
 export default function App() {
   const game = useMushikuiGame();
 
-  if (!game.isPlaying) {
+  if (game.countdown !== null) {
     return (
       <main className="screen">
-        <h1>虫食い算</h1>
-        <div>最高: {game.bestScore} 問</div>
-
-        {courses.map((course) => (
-          <button key={course.label} onClick={() => game.start(course)}>
-            {course.label}
-          </button>
-        ))}
+        <div className="countdown">{game.countdown}</div>
       </main>
+    );
+  }
+
+  if (game.isFinished && game.isNewBest && game.course) {
+    return (
+      <NewBestScreen
+        score={game.correctCount}
+        onRetry={() => game.start(game.course!)}
+        onHome={game.goHome}
+      />
     );
   }
 
@@ -36,15 +40,44 @@ export default function App() {
     );
   }
 
+  if (!game.isPlaying) {
+    return (
+      <main className="screen">
+        <h1>虫食い算</h1>
+        <div className="menu-grid">
+          {courses.map((course) => {
+            const best = game.bestScores[course.id] ?? 0;
+
+            return (
+              <div key={course.id} className="menu-item">
+                <button onClick={() => game.start(course)}>
+                  {course.label}
+                </button>
+
+                {course.id !== "practice" && (
+                  <div className="best">最高: {best}問</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </main>
+    );
+  }
+
+
   return (
     <main className="screen">
       <div>
         {game.course?.id === "practice" ? (
           <div className="status">
-            <div className="timer">{game.timeLeft} 秒   {game.correctCount + game.missCount} 問</div>
-            <div>
-              {game.correctCount} 正解 / {game.missCount} ミス
+            <div className="timer">
+              <span>{game.timeLeft}秒</span>
+              <span>{game.correctCount + game.missCount}問</span>
             </div>
+            {/* <div>
+              {game.correctCount} 正解 / {game.missCount} ミス
+            </div> */}
           </div>
         ) : (
           <>

@@ -92,3 +92,84 @@ button {
   font-size: 40px;
   font-weight: 600;
 }
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.best {
+  font-size: 14px;
+  color: #555;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap; /* スマホで折り返す */
+  margin-top: 24px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-item button {
+  width: 120px;
+  height: 60px;
+  font-size: 18px;
+}
+
+.best {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.countdown {
+  font-size: 96px;
+  font-weight: 700;
+}
+
+.new-best-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #e6a700;
+}
+
+.new-best-score {
+  font-size: 72px;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 20px;
+  background: #fffdf5;
+}
+
+button {
+  width: 140px;
+  height: 50px;
+  font-size: 16px;
+}
+
+.timer {
+  font-size: 32px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* ← ここで間を調整 */
+}
