@@ -321,7 +321,7 @@ button:hover {
   width: min(100vw, 430px);
   box-sizing: border-box;
 
-  background: #e5e5ea;
+  background: #fffdf5;
   padding: 10px;
 
   display: grid;
@@ -351,6 +351,7 @@ button:hover {
   grid-row: span 2;
   height: 100%;
   align-self: stretch;
+  background: rgb(116, 116, 223);
 }
 
 /* PCでは絶対に非表示 */
@@ -373,7 +374,7 @@ button:hover {
 
     padding: 12px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom));
-    background: #e5e5ea;
+    background: #fffdf5;
 
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
