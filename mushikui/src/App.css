@@ -347,7 +347,6 @@ button:hover {
   color: #111;
 }
 
-
 .mobile-keypad .key-ok {
   grid-row: span 2;
   height: auto;
@@ -363,16 +362,17 @@ button:hover {
 @media (max-width: 768px) {
   .mobile-keypad {
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom);
     left: 50%;
     transform: translateX(-50%);
 
     width: 100%;
     max-width: 480px;
     box-sizing: border-box;
+     margin: 0 auto;
 
     padding: 12px;
-    padding-bottom: 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
     background: #e5e5ea;
 
     display: grid;
@@ -386,5 +386,6 @@ button:hover {
     padding-bottom: 300px;
     box-sizing: border-box;
   }
+  
 }
 
