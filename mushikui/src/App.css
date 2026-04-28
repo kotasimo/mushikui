@@ -404,6 +404,22 @@ button:hover {
   transform: scale(0.95);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
 }
-  
+
+.mobile-keypad .key-stop {
+  background: #ff3b30; /* iOS赤 */
+  color: white;
+  font-size: 16px;
 }
+
+.mobile-keypad .key-stop:active {
+  background: #d93025;
+}
+  
+.mobile-keypad .key-stop.key-stop-paused {
+  background: #34c759; /* 再開（緑） */
+  font-size: 16px;
+}
+}
+
+
 

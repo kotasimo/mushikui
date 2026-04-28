@@ -96,6 +96,8 @@ export default function App() {
             onNumber={game.answer}
             onDelete={game.deleteOne}
             onSubmit={game.submit}
+            togglePause={game.togglePause}
+            isPaused={game.isPaused}
           />
         )}
 

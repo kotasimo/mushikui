@@ -32,16 +32,22 @@ export function useMushikuiGame() {
     setMissCount(0);
     setInput("");
     setIsFinished(false);
-    setQuestion(createQuestion(0, selectedCourse));
+    setQuestion(createQuestion(0));
 
     setCountdown(3);
     setIsPlaying(false);
     setIsNewBest(false);
+    setIsPaused(false);
   }
-  
+
   function deleteOne() {
-  setInput((prev) => prev.slice(0, -1));
-}
+    setInput((prev) => prev.slice(0, -1));
+  }
+
+  function togglePause() {
+    if (!isPlaying || isFinished) return;
+    setIsPaused((prev) => !prev);
+  }
 
   // --- 入力 ---
   function answer(value: string) {
@@ -57,10 +63,10 @@ export function useMushikuiGame() {
     if (Number(input) === question.answer) {
       const next = correctCount + 1;
       setCorrectCount(next);
-      setQuestion(createQuestion(next, course ?? undefined));
+      setQuestion(createQuestion(next));
     } else {
       setMissCount((prev) => prev + 1);
-      setQuestion(createQuestion(correctCount, course ?? undefined));
+      setQuestion(createQuestion(correctCount));
     }
 
     setInput("");
@@ -184,5 +190,6 @@ export function useMushikuiGame() {
     endGame,
     goHome,
     deleteOne,
+    togglePause,
   };
 }
