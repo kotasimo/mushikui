@@ -253,36 +253,6 @@ button:hover {
   color: black;
 }
 
-.reset-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #fff;
-  border: 2px solid #000;  /* ← 黒枠しっかり */
-  color: #000;
-
-  font-size: 18px;
-  line-height: 1;
-  padding: 0;
-
-  cursor: pointer;
-  transition: all 0.1s ease;
-  box-shadow: none;
-}
-
-.reset-btn:hover {
-  background: #ddd;
-}
-
-.reset-btn:active {
-  transform: scale(0.9);
-}
-
 .input {
   font-size: 4515
   px;
@@ -291,4 +261,113 @@ button:hover {
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.paused {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32px;
+  font-weight: 700;
+  opacity: 0.6;
+  color: red;
+}
+
+.mobile-keypad {
+  width: min(100%, 420px);
+  margin: 24px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+}
+
+.mobile-keypad button {
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #f2f2f7;
+  color: #111;
+  font-size: 24px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  touch-action: manipulation;
+}
+
+.mobile-keypad button:active {
+  background: #d8d8df;
+  transform: scale(0.98);
+}
+
+.mobile-keypad .key-function {
+  background: #d1d1d6;
+  font-size: 18px;
+}
+
+.mobile-keypad .key-ok {
+  font-weight: 700;
+}
+
+.mobile-keypad .key-zero {
+  grid-column: 2 / 3;
+}
+
+.mobile-keypad {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(100vw, 430px);
+  box-sizing: border-box;
+
+  background: #e5e5ea;
+  padding: 10px;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+
+.game-screen {
+  padding-bottom: 260px;
+}
+
+.mobile-keypad button {
+  width: 100%;
+  height: 60px;
+  box-sizing: border-box;
+
+  border: none;
+  border-radius: 12px;
+  background: #f2f2f7;
+
+  font-size: 22px;
+  color: #111;
+}
+
+.mobile-keypad button:active {
+  background: #d1d1d6;
+}
+
+.mobile-keypad .key-ok {
+  grid-row: span 2;
+  height: auto;
+  align-self: stretch;
+}
+
+/* デフォルト：非表示（PC） */
+.mobile-keypad {
+  display: none;
+}
+
+/* スマホだけ表示 */
+@media (max-width: 768px) {
+  .mobile-keypad {
+    display: grid;
+  }
+  .game-screen {
+    padding-bottom: 260px;
+  }
 }

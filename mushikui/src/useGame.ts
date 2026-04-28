@@ -15,6 +15,7 @@ export function useMushikuiGame() {
   const [course, setCourse] = useState<Course | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isNewBest, setIsNewBest] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const [bestScores, setBestScores] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem(BEST_SCORES_KEY);
@@ -37,6 +38,10 @@ export function useMushikuiGame() {
     setIsPlaying(false);
     setIsNewBest(false);
   }
+  
+  function deleteOne() {
+  setInput((prev) => prev.slice(0, -1));
+}
 
   // --- 入力 ---
   function answer(value: string) {
@@ -76,12 +81,16 @@ export function useMushikuiGame() {
   // --- キーボード ---
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (!isPlaying || isFinished) return;
+      if (!isPlaying || isFinished || isPaused) return;
 
       if (/^[0-9]$/.test(e.key)) answer(e.key);
       if (e.key === "Enter") submit();
       if (e.key === "Backspace") {
         setInput((prev) => prev.slice(0, -1));
+      }
+      if (e.key === " ") {
+        e.preventDefault(); // スクロール防止
+        setIsPaused((prev) => !prev);
       }
     }
 
@@ -92,7 +101,7 @@ export function useMushikuiGame() {
   // --- タイマー ---
   // --- タイマー ---
   useEffect(() => {
-    if (!isPlaying || isFinished || !course) return;
+    if (!isPlaying || isFinished || !course || isPaused) return;
 
     const timer = setInterval(() => {
       setTimeLeft((t) => {
@@ -113,7 +122,7 @@ export function useMushikuiGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isFinished, course]);
+  }, [isPlaying, isFinished, course, isPaused]);
 
   // --- ベストスコア保存 ---
   useEffect(() => {
@@ -166,6 +175,7 @@ export function useMushikuiGame() {
     course,
     countdown,
     isNewBest,
+    isPaused,
 
     // 操作
     start,
@@ -173,5 +183,6 @@ export function useMushikuiGame() {
     submit,
     endGame,
     goHome,
+    deleteOne,
   };
 }

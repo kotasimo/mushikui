@@ -2,9 +2,12 @@ import "./App.css";
 import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
 import { NewBestScreen } from "./components/bestScreen";
+import { MobileKeypad } from "./components/MobileKeypad";
 
 export default function App() {
   const game = useMushikuiGame();
+
+  const isMobile = window.innerWidth <= 768;
 
   if (game.countdown !== null) {
     return (
@@ -83,8 +86,18 @@ export default function App() {
           <div>{game.timeLeft} 秒</div>
         )}
 
+        {game.isPaused && <div className="paused">STOP</div>}
+
         <div className="question">{game.question?.text}</div>
         <div className="input">{game.input || ""}</div>
+
+        {isMobile && (
+          <MobileKeypad
+            onNumber={game.answer}
+            onDelete={game.deleteOne}
+            onSubmit={game.submit}
+          />
+        )}
 
         <button onClick={game.endGame}>終了</button>
       </div>
