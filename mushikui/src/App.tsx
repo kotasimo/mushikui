@@ -71,12 +71,6 @@ export default function App() {
         <div className="score-text">
           {game.correctCount} 正解 / {game.missCount} ミス
         </div>
-
-        {game.course?.id === "practice" && (
-          <button className="reset-btn" onClick={game.resetPractice}>
-            ↺
-          </button>
-        )}
       </div>
 
       <div className="game-center">
