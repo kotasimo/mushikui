@@ -347,9 +347,6 @@ button:hover {
   color: #111;
 }
 
-.mobile-keypad button:active {
-  background: #d1d1d6;
-}
 
 .mobile-keypad .key-ok {
   grid-row: span 2;
@@ -357,7 +354,7 @@ button:hover {
   align-self: stretch;
 }
 
-/* デフォルト：非表示（PC） */
+/* PCでは絶対に非表示 */
 .mobile-keypad {
   display: none;
 }
@@ -365,9 +362,22 @@ button:hover {
 /* スマホだけ表示 */
 @media (max-width: 768px) {
   .mobile-keypad {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+
+    padding: 12px;
+    padding-bottom: 20px;
+    background: #e5e5ea;
+
     display: grid;
-  }
-  .game-screen {
-    padding-bottom: 260px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(4, 60px);
+    gap: 10px;
   }
 }
