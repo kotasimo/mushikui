@@ -13,7 +13,20 @@ type QuestionType =
   | "twoDigitMulOneDigit"
   | "twoDigitDivOneDigit"
   | "twoDigitAddTwoDigitNoCarry"
-  | "twoDigitSubTwoDigitNoBorrow";
+  | "twoDigitSubTwoDigitNoBorrow"
+  | "twoDigitAddTwoDigitCarry"
+  | "twoDigitSubTwoDigitBorrow"
+  | "twoDigitMulOneDigitFull"
+  | "threeDigitDivOneDigit"
+  | "twoDigitAddTwoDigitAny"
+  | "threeDigitSubTwoDigit"
+  | "teenMulTenToThirty"
+  | "teenDivTenToThirty"
+  | "twoDigitMulTwoDigitUnder1000"
+  | "threeDigitDivTwoDigit"
+  | "twoDigitMulTwoDigitFull"
+  | "fourDigitDivTwoDigit"
+  ;
 
 function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -25,11 +38,17 @@ function pick<T>(items: T[]): T {
 
 export function createQuestion(correctCount: number): Question {
   const level =
-    correctCount >= 40 ? 5 :
-      correctCount >= 30 ? 4 :
-        correctCount >= 20 ? 3 :
-          correctCount >= 10 ? 2 :
-            1;
+    correctCount >= 130 ? 11 :
+      correctCount >= 90 ? 10 :
+        correctCount >= 80 ? 9 :
+          correctCount >= 70 ? 8 :
+            correctCount >= 60 ? 7 :
+              correctCount >= 50 ? 6 :
+                correctCount >= 40 ? 5 :
+                  correctCount >= 30 ? 4 :
+                    correctCount >= 20 ? 3 :
+                      correctCount >= 10 ? 2 :
+                        1;
 
   let types: QuestionType[];
 
@@ -53,11 +72,54 @@ export function createQuestion(correctCount: number): Question {
           "twoDigitSubTwoDigitNoBorrow"
         );
       }
+
+      if (level >= 6) {
+        types.push(
+          "twoDigitAddTwoDigitCarry",
+          "twoDigitSubTwoDigitBorrow"
+        );
+      }
+
+      if (level >= 8) {
+        types.push(
+          "twoDigitAddTwoDigitAny",
+          "threeDigitSubTwoDigit"
+        );
+      }
+
     } else {
       types = ["oneDigitMul", "oneDigitDiv"];
 
       if (level >= 4) {
         types.push("twoDigitMulOneDigit", "twoDigitDivOneDigit");
+      }
+
+      if (level >= 7) {
+        types.push(
+          "twoDigitMulOneDigitFull",
+          "threeDigitDivOneDigit"
+        );
+      }
+
+      if (level >= 9) {
+        types.push(
+          "teenMulTenToThirty",
+          "teenDivTenToThirty"
+        );
+      }
+
+      if (level >= 10) {
+        types.push(
+          "twoDigitMulTwoDigitUnder1000",
+          "threeDigitDivTwoDigit"
+        );
+      }
+
+      if (level >= 11) {
+        types.push(
+          "twoDigitMulTwoDigitFull",
+          "fourDigitDivTwoDigit"
+        );
       }
     }
   }
@@ -105,6 +167,74 @@ export function createQuestion(correctCount: number): Question {
     case "twoDigitSubTwoDigitNoBorrow": {
       const { a, b } = makeNoBorrowSub();
       return createSub(a, b);
+    }
+
+    case "twoDigitAddTwoDigitCarry": {
+      const { a, b } = makeCarryAddUnder100();
+      return createAdd(a, b);
+    }
+
+    case "twoDigitSubTwoDigitBorrow": {
+      const { a, b } = makeBorrowSub();
+      return createSub(a, b);
+    }
+
+    case "twoDigitMulOneDigitFull": {
+      const a = rand(10, 99);
+      const b = rand(2, 9);
+      return createMul(a, b);
+    }
+
+    case "threeDigitDivOneDigit": {
+      const b = rand(2, 9);
+      const answer = rand(10, 99); // 商は2桁
+      return createDiv(answer, b);
+    }
+
+    case "twoDigitAddTwoDigitAny": {
+      const a = rand(10, 99);
+      const b = rand(10, 99);
+      return createAdd(a, b);
+    }
+
+    case "threeDigitSubTwoDigit": {
+      const b = rand(10, 99);
+      const a = rand(100, 199); // ここで3桁確定
+      return createSub(a, b);
+    }
+
+    case "teenMulTenToThirty": {
+      const a = rand(10, 19);
+      const b = rand(10, 30);
+      return createMul(a, b);
+    }
+
+    case "teenDivTenToThirty": {
+      const a = rand(10, 19);
+      const b = rand(10, 30);
+      return createDiv(a, b);
+    }
+
+    case "twoDigitMulTwoDigitUnder1000": {
+      const { a, b } = makeTwoDigitMulUnder1000();
+      return createMul(a, b);
+    }
+
+    case "threeDigitDivTwoDigit": {
+      const { a, b } = makeTwoDigitMulUnder1000();
+      return createDiv(a, b);
+    }
+
+    case "twoDigitMulTwoDigitFull": {
+      const a = rand(10, 99);
+      const b = rand(10, 99);
+      return createMul(a, b);
+    }
+
+    case "fourDigitDivTwoDigit": {
+      const a = rand(10, 99);
+      const b = rand(10, 99);
+      return createDiv(a, b);
     }
   }
 }
@@ -175,4 +305,45 @@ function makeNoBorrowSub() {
     a: a10 * 10 + a1,
     b: b10 * 10 + b1,
   };
+}
+
+
+function makeCarryAddUnder100() {
+  while (true) {
+    const a = rand(10, 99);
+    const b = rand(10, 99);
+
+    const hasCarry = (a % 10) + (b % 10) >= 10;
+
+    if (hasCarry && a + b < 100) {
+      return { a, b };
+    }
+  }
+}
+
+function makeBorrowSub() {
+  while (true) {
+    const a = rand(10, 99);
+    const b = rand(10, 99);
+
+    const bigger = Math.max(a, b);
+    const smaller = Math.min(a, b);
+
+    const hasBorrow = (bigger % 10) < (smaller % 10);
+
+    if (hasBorrow) {
+      return { a: bigger, b: smaller };
+    }
+  }
+}
+
+function makeTwoDigitMulUnder1000() {
+  while (true) {
+    const a = rand(10, 99);
+    const b = rand(10, 99);
+
+    if (a * b < 1000) {
+      return { a, b };
+    }
+  }
 }
