@@ -329,9 +329,9 @@ button:hover {
   gap: 8px;
 }
 
-
 .game-screen {
-  padding-bottom: 260px;
+  min-height: 100dvh;
+  overflow: hidden;
 }
 
 .mobile-keypad button {
@@ -380,4 +380,11 @@ button:hover {
     grid-template-rows: repeat(4, 60px);
     gap: 10px;
   }
+    .game-screen {
+    height: 100dvh;
+    overflow: hidden;
+    padding-bottom: 300px;
+    box-sizing: border-box;
+  }
 }
+
