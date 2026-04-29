@@ -134,8 +134,13 @@ export default function App() {
     return (
       <main className="screen">
         <h1>RESULT</h1>
-        <div className="score">{game.correctCount} score</div>
-        <div className="miss">{game.missCount} miss</div>
+
+        <div className="result-score">
+          <div className="score">Score: {game.correctCount}</div>
+          <div className="miss">Miss: {game.missCount}</div>
+        </div>
+
+        <div className="best">Best: {game.bestScore}</div>
 
         {game.course && (
           <button onClick={() => game.start(game.course!)}>Try again</button>
