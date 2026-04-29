@@ -3,8 +3,11 @@ import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
 import { NewBestScreen } from "./components/bestScreen";
 import { MobileKeypad } from "./components/MobileKeypad";
+import { useSurvivalGame } from "./suvival";
 
 export default function App() {
+  const survival = useSurvivalGame();
+
   const game = useMushikuiGame();
 
   const isMobile = window.innerWidth <= 768;
@@ -13,6 +16,41 @@ export default function App() {
     return (
       <main className="screen">
         <div className="countdown">{game.countdown}</div>
+      </main>
+    );
+  }
+
+  if (survival.isPlaying) {
+    return (
+      <main className="game-screen">
+        <div className="score-box">
+          <div className="score-text">
+            {survival.correctCount} 正解 / {survival.missCount} ミス
+          </div>
+        </div>
+
+
+
+        {survival .isPaused && <div className="paused">STOP</div>}
+
+        <div className="game-center">
+          <div>{Math.ceil(survival.timeLeftMs / 1000)} 秒</div>
+
+          <div className="question">{survival.question?.text}</div>
+          <div className="input">{survival.input || ""}</div>
+
+          {isMobile && (
+            <MobileKeypad
+              onNumber={(n) => survival.answer(n)}
+              onDelete={() => survival.deleteOne()}
+              onSubmit={survival.submit}
+              togglePause={survival.togglePause}
+              isPaused={survival.isPaused}
+            />
+          )}
+
+          <button onClick={survival.endGame}>終了</button>
+        </div>
       </main>
     );
   }
@@ -43,6 +81,8 @@ export default function App() {
     );
   }
 
+
+
   if (!game.isPlaying) {
     return (
       <main className="screen">
@@ -63,6 +103,13 @@ export default function App() {
               </div>
             );
           })}
+        </div>
+
+        <div className="menu-item">
+          <button onClick={survival.startGame}>
+            サバイバル
+          </button>
+          <div className="best">最高: {survival.bestScore}問</div>
         </div>
       </main>
     );

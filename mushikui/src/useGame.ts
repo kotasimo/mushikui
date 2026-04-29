@@ -91,9 +91,7 @@ export function useMushikuiGame() {
 
       if (/^[0-9]$/.test(e.key)) answer(e.key);
       if (e.key === "Enter") submit();
-      if (e.key === "Backspace") {
-        setInput((prev) => prev.slice(0, -1));
-      }
+      if (e.key === "Backspace") deleteOne();
       if (e.key === " ") {
         e.preventDefault(); // スクロール防止
         setIsPaused((prev) => !prev);
