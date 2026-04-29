@@ -1,36 +1,42 @@
 import { useEffect, useState } from "react";
 import { createQuestion, type Question } from "./createQuestion";
 
-const SURVIVAL_BEST_KEY = "mushikui_survival_best";
-const ANSWER_TIME_MS = 3000;
+const getSurvivalBestKey = (timeMs: number) =>
+    `mushikui_survival_best_${timeMs}`;
+const DEFAULT_ANSWER_TIME_MS = 3000;
 const MISS_LIMIT = 3;
 
 export function useSurvivalGame() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
-    const [timeLeftMs, setTimeLeftMs] = useState(ANSWER_TIME_MS);
+    const [timeLeftMs, setTimeLeftMs] = useState(DEFAULT_ANSWER_TIME_MS);
     const [question, setQuestion] = useState<Question | null>(null);
     const [input, setInput] = useState("");
     const [correctCount, setCorrectCount] = useState(0);
     const [missCount, setMissCount] = useState(0);
     const [questionNumber, setQuestionNumber] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [countdown, setCountdown] = useState<number | null>(null);
+    const [isNewBest, setIsNewBest] = useState(false);
+    const [answerTimeMs, setAnswerTimeMs] = useState(DEFAULT_ANSWER_TIME_MS);
 
     const [bestScore, setBestScore] = useState<number>(() => {
-        const saved = localStorage.getItem(SURVIVAL_BEST_KEY);
+        const saved = localStorage.getItem(getSurvivalBestKey(3000));
         return saved ? Number(saved) : 0;
     });
 
     function startGame() {
-        setIsPlaying(true);
+        setIsPlaying(false);
         setIsFinished(false);
         setIsPaused(false);
-        setTimeLeftMs(ANSWER_TIME_MS);
+        setTimeLeftMs(answerTimeMs);
         setQuestion(createQuestion(0));
         setInput("");
         setCorrectCount(0);
         setMissCount(0);
         setQuestionNumber(0);
+        setIsNewBest(false);
+        setCountdown(3);
     }
 
     function deleteOne() {
@@ -73,14 +79,35 @@ export function useSurvivalGame() {
         setInput("");
     }
 
+    useEffect(() => {
+        const saved = localStorage.getItem(getSurvivalBestKey(answerTimeMs));
+        setBestScore(saved ? Number(saved) : 0);
+    }, [answerTimeMs]);
+
     function finishGame(finalScore: number) {
         setIsPlaying(false);
         setIsFinished(true);
 
         if (finalScore > bestScore) {
+            setIsNewBest(true);
             setBestScore(finalScore);
-            localStorage.setItem(SURVIVAL_BEST_KEY, String(finalScore));
+            localStorage.setItem(
+                getSurvivalBestKey(answerTimeMs),
+                String(finalScore)
+            );
+        } else {
+            setIsNewBest(false);
         }
+    }
+
+    function getBestScore(timeMs: number) {
+        const saved = localStorage.getItem(getSurvivalBestKey(timeMs));
+        return saved ? Number(saved) : 0;
+    }
+
+    function goHome() {
+        setIsPlaying(false);
+        setIsFinished(false);
     }
 
     // キーボード入力
@@ -93,7 +120,25 @@ export function useSurvivalGame() {
                 togglePause();
                 return;
             }
+
+            if (isPaused) return;
+
+            if (/^[0-9]$/.test(e.key)) {
+                answer(e.key);
+                return;
+            }
+
+            if (e.key === "Backspace") {
+                deleteOne();
+                return;
+            }
+
+            if (e.key === "Enter") {
+                submit();
+                return;
+            }
         }
+
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isPlaying, isFinished, isPaused, input, question, correctCount, missCount]);
@@ -102,12 +147,12 @@ export function useSurvivalGame() {
     useEffect(() => {
         if (!isPlaying || isFinished || !question || isPaused) return;
 
-        setTimeLeftMs(ANSWER_TIME_MS);
+        setTimeLeftMs(answerTimeMs);
         const startTime = Date.now();
 
         const timer = setInterval(() => {
             const elapsed = Date.now() - startTime;
-            const next = Math.max(ANSWER_TIME_MS - elapsed, 0);
+            const next = Math.max(answerTimeMs - elapsed, 0);
 
             setTimeLeftMs(next);
 
@@ -120,6 +165,23 @@ export function useSurvivalGame() {
         return () => clearInterval(timer);
     }, [questionNumber, isPlaying, isFinished, isPaused, question]);
 
+    useEffect(() => {
+        if (countdown === null) return;
+
+        if (countdown === 0) {
+            setCountdown(null);
+            setIsPlaying(true);
+            setTimeLeftMs(answerTimeMs);
+            setQuestion(createQuestion(0));
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setCountdown((prev) => (prev === null ? null : prev - 1));
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [countdown]);
 
 
     return {
@@ -134,6 +196,12 @@ export function useSurvivalGame() {
         bestScore,
         isPaused,
         togglePause,
+        questionNumber,
+        answerTimeMs,
+        countdown,
+        isNewBest,
+        setAnswerTimeMs,
+        getBestScore,
 
 
         startGame,
@@ -141,5 +209,6 @@ export function useSurvivalGame() {
         answer,
         deleteOne,
         submit,
+        goHome,
     };
 }

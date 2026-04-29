@@ -5,13 +5,35 @@ body {
   color: #111;
 }
 
-.screen {
+.screen,
+.game-screen {
+  width: min(100%, 720px);
   min-height: 100vh;
+  margin: 0 auto;
+  background: #fffdf5;
+}
+
+.screen {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 20px;
+}
+
+.game-screen {
+  min-height: 100dvh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.game-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .top {
@@ -21,52 +43,11 @@ body {
   font-size: 22px;
 }
 
-.question {
-  font-size: 44px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.input {
-  font-size: 32px;
-  height: 40px;
-}
-
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 80px);
-  gap: 10px;
-}
-
-.keypad button {
-  width: 80px;
-  height: 60px;
-}
-
-.score {
-  font-size: 48px;
-  font-weight: bold;
-}
-
-.screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
 .status {
   text-align: center;
   font-size: 14px;
   line-height: 1.6;
   color: #555;
-}
-
-.timer {
-  font-size: 20px;
-  color: #111;
 }
 
 .question {
@@ -78,31 +59,118 @@ body {
 
 .input {
   width: 160px;
-  height: 48px;
+  min-height: 48px;
   border-bottom: 3px solid #111;
   text-align: center;
   font-size: 40px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1;
+  margin: 10px 0;
+}
+
+.score {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.score-box {
+  display: flex;
+  justify-content: center; /* 真ん中寄せ */
+  align-items: center;
+  gap: 20px; /* 間隔 */
+}
+
+.correct,
+.miss {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.correct,.score {
+  color: blue;
+}
+
+.miss {
+  color: #d33;
+}
+
+.miss.flash {
+  animation: pop 0.15s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.finish-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+
+  font-size: 14px;
+  border-radius: 15%;
+
+  border: 1px solid #111;
+  background: white;
+  box-shadow: 0 2px 0 #aaa;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.paused {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32px;
+  font-weight: 700;
+  opacity: 0.6;
+  color: red;
+}
+
+.countdown {
+  font-size: 96px;
+  font-weight: 700;
+}
+
+.timer {
+  font-size: 50px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  color: black;
+  margin-bottom: 40px;
+}
+
+.menu-row,
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 12px;
   margin: 8px 0;
 }
 
-.best {
-  font-size: 14px;
-  color: #555;
-}
-
 .menu-grid {
-  display: flex;
-  justify-content: center;
   gap: 24px;
-  flex-wrap: wrap; /* スマホで折り返す */
+  flex-wrap: wrap;
   margin-top: 24px;
 }
 
@@ -112,21 +180,11 @@ body {
   align-items: center;
 }
 
-.menu-item button {
-  width: 120px;
-  height: 60px;
-  font-size: 18px;
-}
-
 .best {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #555;
-}
-
-.countdown {
-  font-size: 96px;
-  font-weight: 700;
+  margin: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
 }
 
 .new-best-title {
@@ -141,86 +199,29 @@ body {
   font-weight: 900;
   margin-bottom: 24px;
 }
-/* 
-.screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  gap: 20px;
-  background: #fffdf5;
-  max-width: 1000px;
-  margin: 0 auto;
-} */
-
-.screen {
-  width: min(100%, 720px);
-  min-height: 100vh;
-  margin: 0 auto;
-  background: #fffdf5;
-}
 
 button {
   width: 140px;
   height: 50px;
-  font-size: 16px;
-}
-
-
-button {
-  font-size: 24px;
   padding: 12px 28px;
   border: 2px solid #111;
+  border-radius: 5px;
   background: white;
-  cursor: pointer;
-}
-
-button {
+  font-size: 24px;
   white-space: nowrap;
-   display: flex;
-  justify-content: center; /* 横中央 */
-  align-items: center;     /* 縦中央 */
-}
+  cursor: pointer;
+  font-weight: 500;
 
-
-.timer {
-  font-size: 32px;
-  font-weight: 700;
   display: flex;
   justify-content: center;
-  gap: 40px; /* ← ここで間を調整 */
-}
-
-.game-screen {
-  min-height: 100vh;
-  position: relative;
-  display: grid;
-  place-items: center;
-  background: #fffdf5;
-  width: min(100%, 720px);
-  margin: 0 auto;
-}
-
-.game-center {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 18px;
-}
 
-.score-box {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  font-size: 14px;
-  color: #444;
-}
-
-button {
   transition: all 0.1s ease;
   box-shadow: 0 4px 0 #aaa;
-  border-radius: 5px;
+}
+
+button:hover {
+  background: #eee;
 }
 
 button:active {
@@ -228,84 +229,25 @@ button:active {
   box-shadow: 0 0 0 #aaa;
 }
 
-button:hover {
-  background: #eee;
-}
-
-.menu-grid {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.best {
-  font-size: 18px;
-  color: rgb(52, 52, 52);
-  margin: 15px;
-}
-
-.score-box {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.score-text {
-  font-size: 206
-  px;
-  color: black;
-}
-
-.input {
-  font-size: 4515
-  px;
-  font-weight: 700;
-  line-height: 1;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.paused {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 32px;
-  font-weight: 700;
-  opacity: 0.6;
-  color: red;
-}
+/* mobile keypad */
 
 .mobile-keypad {
-  width: min(100%, 420px);
-  margin: 24px auto 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 8px;
+  display: none;
 }
 
 .mobile-keypad button {
-  height: 56px;
-  border: none;
+  width: 100%;
+  height: 60px;
+  box-sizing: border-box;
+  border: 2px solid black;
   border-radius: 12px;
   background: #f2f2f7;
   color: #111;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 500;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
   touch-action: manipulation;
-}
-
-.mobile-keypad button:active {
-  background: #d8d8df;
-  transform: scale(0.98);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-keypad .key-function {
@@ -313,48 +255,8 @@ button:hover {
   font-size: 18px;
 }
 
-.mobile-keypad .key-ok {
-  font-weight: 700;
-}
-
 .mobile-keypad .key-zero {
   grid-column: 2 / 3;
-}
-
-.mobile-keypad {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-
-  width: min(100vw, 430px);
-  box-sizing: border-box;
-
-  background: #fffdf5;
-  padding: 10px;
-
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.game-screen {
-  min-height: 100dvh;
-  overflow: hidden;
-}
-
-.mobile-keypad button {
-  width: 100%;
-  height: 60px;
-  box-sizing: border-box;
-
-  border: none;
-  border-radius: 12px;
-  background: #f2f2f7;
-
-  font-size: 22px;
-  color: #111;
-  border: 2px solid black;
 }
 
 .mobile-keypad .key-ok {
@@ -362,15 +264,26 @@ button:hover {
   height: 100%;
   align-self: stretch;
   background: rgb(116, 116, 223);
+  font-weight: 700;
 }
 
-/* PCでは絶対に非表示 */
-.mobile-keypad {
-  display: none;
+.mobile-keypad .key-stop {
+  background: #ff3b30;
+  color: white;
+  font-size: 16px;
 }
 
-/* スマホだけ表示 */
+.mobile-keypad .key-stop.key-stop-paused {
+  background: #34c759;
+}
+
 @media (max-width: 768px) {
+  .game-screen {
+    height: 100dvh;
+    padding-bottom: 300px;
+    box-sizing: border-box;
+  }
+
   .mobile-keypad {
     position: fixed;
     bottom: env(safe-area-inset-bottom);
@@ -380,7 +293,7 @@ button:hover {
     width: 100%;
     max-width: 480px;
     box-sizing: border-box;
-     margin: 0 auto;
+    margin: 0 auto;
 
     padding: 12px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom));
@@ -391,44 +304,25 @@ button:hover {
     grid-template-rows: repeat(4, 60px);
     gap: 10px;
   }
-    .game-screen {
-    height: 100dvh;
-    overflow: hidden;
-    padding-bottom: 300px;
-    box-sizing: border-box;
+
+  .mobile-keypad button:active {
+    background: #d1d1d6;
+    transform: scale(0.97);
   }
 
-  .mobile-keypad button {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  .mobile-keypad .key-ok:active {
+    background: #b8b8c0;
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
+  }
+
+  .mobile-keypad .key-stop:active {
+    background: #d93025;
+  }
 }
 
-.mobile-keypad button:active {
-  background: #d1d1d6;
-  transform: scale(0.97);
+.result-score {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* 間隔 */
 }
-
-.mobile-keypad .key-ok:active {
-  background: #b8b8c0;
-  transform: scale(0.95);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
-}
-
-.mobile-keypad .key-stop {
-  background: #ff3b30; /* iOS赤 */
-  color: white;
-  font-size: 16px;
-}
-
-.mobile-keypad .key-stop:active {
-  background: #d93025;
-}
-  
-.mobile-keypad .key-stop.key-stop-paused {
-  background: #34c759; /* 再開（緑） */
-  font-size: 16px;
-}
-}
-
-
-
