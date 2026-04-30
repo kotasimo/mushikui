@@ -6,12 +6,16 @@ import { MobileKeypad } from "./components/MobileKeypad";
 import { useSurvivalGame } from "./suvival";
 import { TimerCircle } from "./components/TimerCircle";
 import { useState, useEffect } from "react";
+import { useChallengeGame } from "./useChallenge";
+import { challengeCourses } from "./challenge";
 
 export default function App() {
   const survival = useSurvivalGame();
   const game = useMushikuiGame();
+  const challenge = useChallengeGame();
+
   const [screen, setScreen] = useState<
-    "home" | "time-select" | "survival-select"
+    "home" | "time-select" | "survival-select" | "challenge-select"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
 
@@ -22,11 +26,9 @@ export default function App() {
     if (survival.missCount === 0) return;
 
     setFlashMiss(true);
-
     const t = setTimeout(() => {
       setFlashMiss(false);
     }, 150); // 一瞬
-
     return () => clearTimeout(t);
   }, [survival.missCount]);
 
@@ -85,6 +87,43 @@ export default function App() {
             </div>
           </div>
 
+        </div>
+      </main>
+    );
+  }
+
+  if (challenge.isPlaying) {
+    return (
+      <main className="game-screen">
+        <button className="finish-button" onClick={challenge.endGame}>
+          finish
+        </button>
+
+        <div className="game-center">
+          <div className="timer">{challenge.timeLeft}s</div>
+          <div className="remaining">{challenge.remaining} left</div>
+
+          <div className="question">{challenge.question?.text}</div>
+          <div className="input">{challenge.input || ""}</div>
+
+          {isMobile && (
+            <MobileKeypad
+              onNumber={challenge.answer}
+              onDelete={challenge.deleteOne}
+              onSubmit={challenge.submit}
+              togglePause={challenge.togglePause}
+              isPaused={challenge.isPaused}
+            />
+          )}
+
+          <div className="score-box">
+            <div className="correct">
+              {challenge.correctCount} ✓
+            </div>
+            <div className={`miss ${flashMiss ? "flash" : ""}`}>
+              {challenge.missCount} ✖
+            </div>
+          </div>
 
         </div>
       </main>
@@ -151,6 +190,34 @@ export default function App() {
     );
   }
 
+
+  if (challenge.isFinished) {
+    return (
+      <main className="screen">
+        <h1>RESULT</h1>
+        <div>{challenge.remaining === 0 ? "CLEAR" : "FAILED"}</div>
+
+        <button
+          onClick={() => {
+            challenge.goHome();
+            setScreen("challenge-select");
+          }}
+        >
+          Play Again
+        </button>
+
+        <button
+          onClick={() => {
+            challenge.goHome();
+            setScreen("home");
+          }}
+        >
+          Home
+        </button>
+      </main>
+    );
+  }
+
   if (!game.isPlaying && screen === "time-select") {
     const timeCourses = courses.filter((course) => course.id !== "practice");
 
@@ -193,6 +260,12 @@ export default function App() {
           <div className="menu-item">
             <button onClick={() => setScreen("survival-select")}>
               サバイバル
+            </button>
+          </div>
+
+          <div className="menu-item">
+            <button onClick={() => setScreen("challenge-select")}>
+              Challenge
             </button>
           </div>
 
@@ -250,6 +323,46 @@ export default function App() {
             </button>
             <div className="best">Best: {survival.getBestScore(3000)}</div>
           </div>
+        </div>
+
+        <button onClick={() => setScreen("home")}>Back</button>
+      </main>
+    );
+  }
+
+  if (!game.isPlaying && screen === "challenge-select") {
+    return (
+      <main className="screen">
+        <h1>Challenge</h1>
+
+        <div className="menu-list">
+          {challengeCourses.map((course) => {
+            const best = challenge.getBest(course.id);
+
+            return (
+              <div key={course.id} className="menu-row">
+                <button
+                  onClick={() => {
+                    challenge.startGame(course);
+                  }}
+                >
+                  {course.label}
+                </button>
+
+                <div className="menu-info">
+                  {best.cleared ? (
+                    <div className="clear">
+                      ✓ {best.bestTime}s
+                    </div>
+                  ) : (
+                    <div className="not-clear">
+                      □ {best.bestCount}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <button onClick={() => setScreen("home")}>Back</button>

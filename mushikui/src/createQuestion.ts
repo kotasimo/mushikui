@@ -128,6 +128,72 @@ export function createQuestion(correctCount: number): Question {
 
   console.log({ level, types, type });
 
+  return createQuestionByType(type);
+}
+
+export function createQuestionByLevel(level: number): Question {
+  let types: QuestionType[];
+
+  if (level === 1) {
+    types = ["oneDigitAdd", "oneDigitSub"];
+  } else {
+    const isAddSub = Math.random() < 0.5;
+
+    if (isAddSub) {
+      types = ["oneDigitAdd", "oneDigitSub"];
+
+      if (level >= 3) {
+        types.push("twoDigitAddOneDigit", "twoDigitSubOneDigit");
+      }
+
+      if (level >= 5) {
+        types.push(
+          "twoDigitAddTwoDigitNoCarry",
+          "twoDigitSubTwoDigitNoBorrow"
+        );
+      }
+
+      if (level >= 6) {
+        types.push(
+          "twoDigitAddTwoDigitCarry",
+          "twoDigitSubTwoDigitBorrow"
+        );
+      }
+
+      if (level >= 8) {
+        types.push("twoDigitAddTwoDigitAny", "threeDigitSubTwoDigit");
+      }
+    } else {
+      types = ["oneDigitMul", "oneDigitDiv"];
+
+      if (level >= 4) {
+        types.push("twoDigitMulOneDigit", "twoDigitDivOneDigit");
+      }
+
+      if (level >= 7) {
+        types.push("twoDigitMulOneDigitFull", "threeDigitDivOneDigit");
+      }
+
+      if (level >= 9) {
+        types.push("teenMulTenToThirty", "teenDivTenToThirty");
+      }
+
+      if (level >= 10) {
+        types.push("twoDigitMulTwoDigitUnder1000", "threeDigitDivTwoDigit");
+      }
+
+      if (level >= 11) {
+        types.push("twoDigitMulTwoDigitFull", "fourDigitDivTwoDigit");
+      }
+    }
+  }
+
+  const type = pick(types);
+
+  return createQuestionByType(type);
+}
+
+function createQuestionByType(type: QuestionType): Question {
   switch (type) {
     case "oneDigitAdd":
       return createAdd(rand(1, 9), rand(1, 9));

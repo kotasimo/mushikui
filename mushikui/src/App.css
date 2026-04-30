@@ -326,3 +326,28 @@ button:active {
   align-items: center;
   gap: 20px; /* 間隔 */
 }
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.menu-info {
+  font-size: 18px;
+}
+
+.clear {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.not-clear {
+  color: #555;
+}
