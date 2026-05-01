@@ -711,14 +711,14 @@ button:active {
 
   .monster-area {
     position: relative;
-    width: 160px;
+    width: min(72vw, 260px);
     margin-top: 0 !important;
     margin-bottom: 10px;
   }
 
   .monster-big {
     width: 100%;
-    max-height: 110px;
+    max-height: 160px;
     object-fit: contain;
     display: block;
   }
