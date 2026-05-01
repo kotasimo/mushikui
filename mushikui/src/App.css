@@ -756,3 +756,30 @@ button:active {
   font-size: 50px;
   font-weight: 1000;
 }
+
+@media (max-width: 768px) {
+  .monster-area {
+    position: relative;
+    width: 160px;
+    margin-top: 0 !important;
+    margin-bottom: 12px;
+  }
+
+  .monster-big {
+    width: 100%;
+    max-height: 110px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .hp-bar {
+    left: 0;
+    width: 100%;
+    bottom: -8px;
+  }
+
+  .timer {
+    font-size: 28px;
+    top: -6px;
+  }
+}
