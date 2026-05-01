@@ -51,11 +51,14 @@ export function GameScreen({
       {isPaused && <div className="paused">STOP</div>}
 
       <div className="game-center">
-        {/* 👇 モードごとの差し込み */}
-        {children}
+        <div className="game-info">
+          {children}
+        </div>
 
-        <div className="question">{question}</div>
-        <div className="input">{input || ""}</div>
+        <div className="question-area">
+          <div className="question">{question}</div>
+          <div className="input">{input || ""}</div>
+        </div>
 
         {/* keypad */}
         {isMobile && (

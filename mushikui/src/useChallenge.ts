@@ -3,6 +3,7 @@ import { createQuestionByLevel, type Question } from "./createQuestion";
 import type { ChallengeCourse } from "./challenge";
 import { useAnswerLogs } from "./hooks/useAnswerLogs";
 
+
 type ChallengeBest = {
   bestCount: number;
   bestTime: number | null; // クリア時の残り秒数
@@ -255,6 +256,7 @@ export function useChallengeGame() {
     missCount,
     answerLogs,
     countdown,
+    currentCourse,
 
     togglePause,
     deleteOne,

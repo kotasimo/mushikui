@@ -1,7 +1,6 @@
 import "./App.css";
 import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
-import { NewBestScreen } from "./components/bestScreen";
 import { useSurvivalGame } from "./suvival";
 import { TimerCircle } from "./components/TimerCircle";
 import { useState, useEffect } from "react";
@@ -12,6 +11,9 @@ import { GameScreen } from "./components/gamescreen";
 import { TimerView } from "./components/TimeView";
 import { MenuButton } from "./components/MenuButton";
 import { AnswerLogScreen } from "./components/AnswerLogScreen";
+import { AnswerLogTable } from "./components/AnswerLogTable";
+import { monsters } from "./monster";
+
 
 export default function App() {
   const survival = useSurvivalGame();
@@ -137,6 +139,15 @@ export default function App() {
     );
   }
 
+  const challengeLevel =
+    challenge.currentCourse?.levels[
+    challenge.currentCourse.levels.length - 1
+    ];
+
+  const monster = challengeLevel !== undefined
+    ? monsters[challengeLevel]
+    : undefined;
+
   if (challenge.isPlaying || challenge.countdown !== null) {
     return (
       <GameScreen
@@ -154,55 +165,51 @@ export default function App() {
         countdown={challenge.countdown}
       >
         {/* 👇 ここが children */}
-        <div className="timer">{challenge.timeLeft}s</div>
-        <div className="remaining">{challenge.remaining} left</div>
-      </GameScreen>
-    );
-  }
+        <div className="monster-area">
+          {/* タイマー（上に重ねる） */}
+          <div className="timer">{challenge.timeLeft}s</div>
 
-  if (survival.isFinished && survival.isNewBest) {
-    return (
-      <NewBestScreen
-        score={survival.correctCount}
-        onRetry={survival.startGame}
-        onHome={() => {
-          survival.goHome();
-          setScreen("home");
-        }}
-      />
+          {/* モンスター */}
+          <img src={monster} className="monster-big" />
+
+          {/* HP（下に重ねる） */}
+          <div className="hp-bar">
+            <div
+              className="hp-fill"
+              style={{
+                width: `${challenge.currentCourse
+                  ? (challenge.remaining /
+                    challenge.currentCourse.questionCount) *
+                  100
+                  : 100
+                  }%`,
+              }}
+            />
+          </div>
+        </div>
+      </GameScreen>
     );
   }
 
   if (survival.isFinished) {
     return (
-      <ResultScreen onRetry={survival.startGame} onHome={survival.goHome}>
-        <div className="result-score">
-          <div>Score: {survival.correctCount}</div>
-          <div>Miss: {survival.missCount}</div>
+      <ResultScreen
+        onRetry={survival.startGame}
+        onHome={() => {
+          survival.goHome();
+          setScreen("home");
+        }}
+      >
+        <div className="result-score-main">
+          {survival.correctCount}
         </div>
 
-        <div>Best: {survival.bestScore}</div>
+        <div className="result-best">
+          Best {survival.bestScore}
+        </div>
 
-        <button onClick={() => setScreen("survival-log")}>
-          履歴
-        </button>
+        <AnswerLogTable logs={survival.answerLogs} />
       </ResultScreen>
-    );
-  }
-
-  if (game.isFinished && game.isNewBest && game.course) {
-    return (
-      <div>
-        <NewBestScreen
-          score={game.correctCount}
-          onRetry={() => game.start(game.course!)}
-          onHome={game.goHome}
-        />
-        <button onClick={() => setScreen("game-log")}>
-          履歴
-        </button>
-      </div>
-
     );
   }
 
@@ -210,25 +217,40 @@ export default function App() {
     return (
       <ResultScreen
         onRetry={game.course ? () => game.start(game.course!) : undefined}
-        onHome={game.goHome}
+        onHome={() => {
+          game.goHome();
+          setScreen("home");
+        }}
       >
-        <div className="result-score">
-          <div className="score">Score: {game.correctCount}</div>
-          <div className="miss">Miss: {game.missCount}</div>
+        <div className="result-score-main">
+          {game.correctCount}
         </div>
 
-        <div className="best">Best: {game.bestScore}</div>
-        <button onClick={() => setScreen("game-log")}>
-          履歴
-        </button>
+        <div className="result-best">
+          Best {game.bestScore}
+        </div>
+
+        <AnswerLogTable logs={game.answerLogs} />
       </ResultScreen>
     );
   }
 
   if (challenge.isFinished) {
+    const clearTime =
+      challenge.currentCourse
+        ? challenge.currentCourse.timeLimit - challenge.timeLeft
+        : 0;
+
     return (
       <ResultScreen
+        title={challenge.remaining === 0 ? "CLEAR" : "FAILED"}
+        timeText={`${clearTime}s`}
         onRetry={() => {
+          if (challenge.currentCourse) {
+            challenge.startGame(challenge.currentCourse);
+          }
+        }}
+        onCourses={() => {
           challenge.goHome();
           setScreen("challenge-select");
         }}
@@ -237,11 +259,7 @@ export default function App() {
           setScreen("home");
         }}
       >
-        <div>{challenge.remaining === 0 ? "CLEAR" : "FAILED"}</div>
-
-        <button onClick={() => setScreen("challenge-log")}>
-          履歴
-        </button>
+        <AnswerLogTable logs={challenge.answerLogs} />
       </ResultScreen>
     );
   }
@@ -340,27 +358,28 @@ export default function App() {
       <main className="screen">
         <h1>Challenge</h1>
 
-        <div className="menu-list">
+        <div className="challenge-list">
           {challengeCourses.map((course) => {
             const best = challenge.getBest(course.id);
 
-            return (
-              <div key={course.id} className="menu-row">
-                <button
-                  onClick={() => {
-                    challenge.startGame(course);
-                  }}
-                >
-                  {course.label}
-                </button>
+            const level = course.levels[course.levels.length - 1];
+            const monster = monsters[level];
 
-                <div className="menu-info">
-                  {best.cleared ? (
-                    <div className="clear">✓ {best.bestTime}s</div>
-                  ) : (
-                    <div className="not-clear">□ {best.bestCount}</div>
-                  )}
-                </div>
+            return (
+              <div key={course.id} className="challenge-card">
+                <button
+                  className="challenge-card-button"
+                  onClick={() => challenge.startGame(course)}
+                >
+                  <span className="challenge-card-left">
+                    <span>{course.label}</span>
+                    <img src={monster} className="monster-icon" />
+                  </span>
+
+                  <span className="challenge-card-right">
+                    {best.cleared ? "✓" : "—"}
+                  </span>
+                </button>
               </div>
             );
           })}
