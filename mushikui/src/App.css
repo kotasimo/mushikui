@@ -8,7 +8,8 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 420px; /* ←ここで統一 */
+  max-width: 420px;
+  /* ←ここで統一 */
   margin: 0 auto;
 }
 
@@ -94,9 +95,11 @@ body {
 
 .score-box {
   display: flex;
-  justify-content: center; /* 真ん中寄せ */
+  justify-content: center;
+  /* 真ん中寄せ */
   align-items: center;
-  gap: 20px; /* 間隔 */
+  gap: 20px;
+  /* 間隔 */
   margin: 8px 0 4px;
 }
 
@@ -106,7 +109,8 @@ body {
   font-weight: bold;
 }
 
-.correct,.score {
+.correct,
+.score {
   color: blue;
 }
 
@@ -122,9 +126,11 @@ body {
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.4);
   }
+
   100% {
     transform: scale(1);
   }
@@ -619,7 +625,7 @@ button:active {
 .monster-area {
   position: relative;
   width: 400px;
-   margin-top: -280px;
+  margin-top: -280px;
   margin-bottom: 10px;
 }
 
@@ -749,7 +755,7 @@ button:active {
     margin: 6px 0;
   }
 
-   .app-container {
+  .app-container {
     max-width: 100%;
     padding: 0 12px;
   }
@@ -786,17 +792,20 @@ button:active {
   }
 
   .log-table th {
-  background: #f2f2f2;   /* 軽くする */
-  color: #333;
-  font-weight: 600;      /* ちょい軽く */
-  font-size: 14px;
-}
+    background: #f2f2f2;
+    /* 軽くする */
+    color: #333;
+    font-weight: 600;
+    /* ちょい軽く */
+    font-size: 14px;
+  }
 
-.log-table th:nth-child(2) {
-  writing-mode: horizontal-tb; /* ← 横に戻す */
-}
+  .log-table th:nth-child(2) {
+    writing-mode: horizontal-tb;
+    /* ← 横に戻す */
+  }
 
-.question {
+  .question {
     margin-bottom: 10px;
   }
 
@@ -809,6 +818,26 @@ button:active {
   .score-box {
     margin-top: 10px;
     gap: 24px;
+  }
+
+  .screen {
+    justify-content: flex-start;
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 72px 16px 24px;
+    box-sizing: border-box;
+  }
+
+  .challenge-list {
+    width: 100%;
+    padding-bottom: 32px;
+  }
+
+  .challenge-card-button {
+    height: 56px;
+    font-size: 20px;
+  }
 }
 
 .monster-hit {
@@ -820,10 +849,14 @@ button:active {
     transform: scale(1);
     filter: brightness(1);
   }
+
   40% {
-    transform: scale(0.97);   /* ← 縮む */
-    filter: brightness(0.95); /* ← 少し暗く（ダメージ感） */
+    transform: scale(0.97);
+    /* ← 縮む */
+    filter: brightness(0.95);
+    /* ← 少し暗く（ダメージ感） */
   }
+
   100% {
     transform: scale(1);
     filter: brightness(1);
