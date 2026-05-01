@@ -300,8 +300,65 @@ button:active {
 @media (max-width: 768px) {
   .game-screen {
     height: 100dvh;
-    padding-bottom: 300px;
+    min-height: 100dvh;
+    padding: 16px 12px 300px;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-center {
+    height: auto;
+    max-height: calc(100dvh - 300px);
+    justify-content: center;
+    gap: 8px;
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  .monster-area {
+    width: min(70vw, 260px);
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .monster-big {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+  }
+
+  .hp-bar {
+    left: 0;
+    width: 100%;
+    bottom: -8px;
+  }
+
+  .timer {
+    font-size: 36px;
+    top: -8px;
+  }
+
+  .question {
+    font-size: 42px;
+    margin-top: 8px;
+  }
+
+  .input {
+    font-size: 32px;
+    min-height: 38px;
+    margin: 8px 0;
+  }
+
+  .score-box {
+    margin-top: 6px;
+  }
+
+  .correct,
+  .miss,
+  .score {
+    font-size: 28px;
   }
 
   .mobile-keypad {
