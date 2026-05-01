@@ -10,6 +10,7 @@ import { challengeCourses } from "./challenge";
 import { ResultScreen } from "./components/result";
 import { GameScreen } from "./components/gamescreen";
 import { TimerView } from "./components/TimeView";
+import { MenuButton } from "./components/MenuButton";
 
 export default function App() {
   const survival = useSurvivalGame();
@@ -20,6 +21,14 @@ export default function App() {
     "home" | "time-select" | "survival-select" | "challenge-select"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
+
+  function handleGameNumber(n: number) {
+    game.answer(String(n));
+  }
+
+  function handleSurvivalNumber(n: number) {
+    survival.answer(String(n));
+  }
 
   useEffect(() => {
     if (survival.missCount === 0) return;
@@ -55,11 +64,12 @@ export default function App() {
         correct={survival.correctCount}
         miss={survival.missCount}
         onFinish={survival.endGame}
-        onNumber={(n) => survival.answer(String(n))}
+        onNumber={handleSurvivalNumber}
         onDelete={survival.deleteOne}
         onSubmit={survival.submit}
         togglePause={survival.togglePause}
         isPaused={survival.isPaused}
+        flashMiss={flashMiss}
       >
         <TimerCircle
           timeLeftMs={survival.timeLeftMs}
@@ -82,6 +92,7 @@ export default function App() {
         onSubmit={challenge.submit}
         togglePause={challenge.togglePause}
         isPaused={challenge.isPaused}
+        flashMiss={flashMiss}
       >
         {/* 👇 ここが children */}
         <div className="timer">{challenge.timeLeft}s</div>
@@ -168,12 +179,12 @@ export default function App() {
             const best = game.bestScores[course.id] ?? 0;
 
             return (
-              <div key={course.id} className="menu-item">
-                <button onClick={() => game.start(course)}>
-                  {course.label}
-                </button>
-                <div className="best">Best: {best}</div>
-              </div>
+              <MenuButton
+                key={course.id}
+                label={course.label}
+                info={`Best: ${best}`}
+                onClick={() => game.start(course)}
+              />
             );
           })}
         </div>
@@ -189,33 +200,18 @@ export default function App() {
         <h1>虫食い算</h1>
 
         <div className="menu-grid">
-          <div className="menu-item">
-            <button onClick={() => setScreen("time-select")}>タイム</button>
-          </div>
+          <MenuButton label="タイム" onClick={() => setScreen("time-select")} />
 
-          <div className="menu-item">
-            <button onClick={() => setScreen("survival-select")}>
-              サバイバル
-            </button>
-          </div>
+          <MenuButton label="サバイバル" onClick={() => setScreen("survival-select")} />
 
-          <div className="menu-item">
-            <button onClick={() => setScreen("challenge-select")}>
-              Challenge
-            </button>
-          </div>
+          <MenuButton label="Challenge" onClick={() => setScreen("challenge-select")} />
 
-          <div className="menu-item">
-            <button
-              onClick={() =>
-                game.start(courses.find((c) => c.id === "practice")!)
-              }
-            >
-              練習
-            </button>
-          </div>
+          <MenuButton
+            label="練習"
+            onClick={() => game.start(courses.find((c) => c.id === "practice")!)}
+          />
         </div>
-      </main>
+      </main >
     );
   }
 
@@ -225,46 +221,36 @@ export default function App() {
         <h1>サバイバル</h1>
 
         <div className="menu-grid">
-          <div className="menu-item">
-            <button
-              onClick={() => {
-                survival.setAnswerTimeMs(10000);
-                survival.startGame();
-                setScreen("home");
-              }}
-            >
-              10s
-            </button>
-            <div className="best">Best: {survival.getBestScore(10000)}</div>
-          </div>
+          <MenuButton
+            label="10s"
+            info={`Best: ${survival.getBestScore(10000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(10000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
 
-          <div className="menu-item">
-            <button
-              onClick={() => {
-                survival.setAnswerTimeMs(5000);
-                survival.startGame();
-                setScreen("home");
-              }}
-            >
-              5s
-            </button>
-            <div className="best">Best: {survival.getBestScore(5000)}</div>
-          </div>
+          <MenuButton
+            label="5s"
+            info={`Best: ${survival.getBestScore(5000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(5000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
 
-          <div className="menu-item">
-            <button
-              onClick={() => {
-                survival.setAnswerTimeMs(3000);
-                survival.startGame();
-                setScreen("home");
-              }}
-            >
-              3s
-            </button>
-            <div className="best">Best: {survival.getBestScore(3000)}</div>
-          </div>
+          <MenuButton
+            label="3s"
+            info={`Best: ${survival.getBestScore(3000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(3000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
         </div>
-
         <button onClick={() => setScreen("home")}>Back</button>
       </main>
     );
@@ -313,11 +299,12 @@ export default function App() {
       correct={game.correctCount}
       miss={game.missCount}
       onFinish={game.endGame}
-      onNumber={(n) => game.answer(String(n))}
+      onNumber={handleGameNumber}
       onDelete={game.deleteOne}
       onSubmit={game.submit}
       togglePause={game.togglePause}
       isPaused={game.isPaused}
+      flashMiss={flashMiss}
     >
       <TimerView
         timeLeft={game.timeLeft}

@@ -1,17 +1,20 @@
 import { MobileKeypad } from "./MobileKeypad";
 
-type GameScreenProps = {
+type Props = {
   question: string | undefined;
   input: string;
   correct: number;
   miss: number;
+  flashMiss?: boolean;
+
   onFinish: () => void;
+  onNumber: (n: number) => void;
+  onDelete: () => void;
+  onSubmit: () => void;
+  togglePause: () => void;
+  isPaused: boolean;
+
   children?: React.ReactNode;
-  onNumber?: (n: number) => void;
-  onDelete?: () => void;
-  onSubmit?: () => void;
-  togglePause?: () => void;
-  isPaused?: boolean;
 };
 
 export function GameScreen({
@@ -19,44 +22,51 @@ export function GameScreen({
   input,
   correct,
   miss,
+  flashMiss = false,
   onFinish,
-  children,
   onNumber,
   onDelete,
   onSubmit,
   togglePause,
   isPaused,
-}: GameScreenProps) {
+  children,
+}: Props) {
   const isMobile = window.innerWidth <= 768;
 
   return (
     <main className="game-screen">
+      {/* finishボタン */}
       <button className="finish-button" onClick={onFinish}>
         finish
       </button>
 
+      {/* pause表示 */}
       {isPaused && <div className="paused">STOP</div>}
 
       <div className="game-center">
-        {/* 👇 ここに差し込む */}
+        {/* 👇 モードごとの差し込み */}
         {children}
 
         <div className="question">{question}</div>
         <div className="input">{input || ""}</div>
 
-        {isMobile && onNumber && onDelete && onSubmit && togglePause && (
+        {/* keypad */}
+        {isMobile && (
           <MobileKeypad
             onNumber={onNumber}
             onDelete={onDelete}
             onSubmit={onSubmit}
             togglePause={togglePause}
-            isPaused={isPaused ?? false}
+            isPaused={isPaused}
           />
         )}
 
+        {/* score */}
         <div className="score-box">
           <div className="correct">{correct} ✓</div>
-          <div className="miss">{miss} ✖</div>
+          <div className={`miss ${flashMiss ? "flash" : ""}`}>
+            {miss} ✖
+          </div>
         </div>
       </div>
     </main>
