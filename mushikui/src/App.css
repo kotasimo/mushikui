@@ -795,6 +795,20 @@ button:active {
 .log-table th:nth-child(2) {
   writing-mode: horizontal-tb; /* ← 横に戻す */
 }
+
+.question {
+    margin-bottom: 10px;
+  }
+
+  .input {
+    margin: 10px 0 18px;
+    min-height: 42px;
+    line-height: 42px;
+  }
+
+  .score-box {
+    margin-top: 10px;
+    gap: 24px;
 }
 
 .monster-hit {
