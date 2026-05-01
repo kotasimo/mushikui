@@ -97,7 +97,7 @@ body {
   justify-content: center; /* 真ん中寄せ */
   align-items: center;
   gap: 20px; /* 間隔 */
-  margin-top: 16px;
+  margin: 8px 0 4px;
 }
 
 .correct,
@@ -332,6 +332,7 @@ button:active {
 
     width: 100%;
     max-width: 420px;
+    margin-top: 6px;
 
     padding: 8px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
@@ -374,6 +375,25 @@ button:active {
 
   .timer {
     font-size: 32px;
+  }
+
+   .monster-area {
+    width: min(58vw, 180px);
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+
+  .monster-big {
+    max-height: 110px;
+  }
+
+  .hp-bar {
+    bottom: -6px;
+  }
+
+  .timer {
+    font-size: 30px;
+    top: -4px;
   }
 }
 

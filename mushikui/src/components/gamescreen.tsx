@@ -60,6 +60,14 @@ export function GameScreen({
           <div className="input">{input || ""}</div>
         </div>
 
+        {/* score */}
+        <div className="score-box">
+          <div className="correct">{correct} ✓</div>
+          <div className={`miss ${flashMiss ? "flash" : ""}`}>
+            {miss} ✖
+          </div>
+        </div>
+        
         {/* keypad */}
         {isMobile && (
           <MobileKeypad
@@ -70,14 +78,6 @@ export function GameScreen({
             isPaused={isPaused}
           />
         )}
-
-        {/* score */}
-        <div className="score-box">
-          <div className="correct">{correct} ✓</div>
-          <div className={`miss ${flashMiss ? "flash" : ""}`}>
-            {miss} ✖
-          </div>
-        </div>
       </div>
     </main>
   );
