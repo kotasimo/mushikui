@@ -680,7 +680,7 @@ button:active {
     align-items: center;
     justify-content: center;
 
-    transform: scale(0.82);
+    transform: scale(0.9);
     transform-origin: center;
   }
 
@@ -691,7 +691,7 @@ button:active {
     flex-shrink: 0;
 
     width: 100%;
-    max-width: 420px;
+    max-width: 100%;
 
     padding: 8px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
@@ -741,5 +741,10 @@ button:active {
     font-size: 30px;
     min-height: 34px;
     margin: 6px 0;
+  }
+
+   .app-container {
+    max-width: 100%;
+    padding: 0 12px;
   }
 }
