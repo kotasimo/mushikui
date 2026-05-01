@@ -15,6 +15,7 @@ type Props = {
   isPaused: boolean;
 
   children?: React.ReactNode;
+  countdown?: number | null;
 };
 
 export function GameScreen({
@@ -30,11 +31,17 @@ export function GameScreen({
   togglePause,
   isPaused,
   children,
+  countdown,
 }: Props) {
   const isMobile = window.innerWidth <= 768;
 
   return (
     <main className="game-screen">
+      {countdown !== null && (
+        <div className="countdown">
+          {countdown === 0 ? "START" : countdown}
+        </div>
+      )}
       {/* finishボタン */}
       <button className="finish-button" onClick={onFinish}>
         finish

@@ -64,6 +64,16 @@ export default function App() {
     );
   }
 
+
+  if (challenge.countdown !== null) {
+    return (
+      <main className="screen">
+        <div className="countdown">{challenge.countdown}</div>
+      </main>
+    );
+  }
+
+
   if (screen === "survival-log") {
     return (
       <AnswerLogScreen
@@ -127,7 +137,7 @@ export default function App() {
     );
   }
 
-  if (challenge.isPlaying) {
+  if (challenge.isPlaying || challenge.countdown !== null) {
     return (
       <GameScreen
         question={challenge.question?.text}
@@ -141,6 +151,7 @@ export default function App() {
         togglePause={challenge.togglePause}
         isPaused={challenge.isPaused}
         flashMiss={flashMiss}
+        countdown={challenge.countdown}
       >
         {/* 👇 ここが children */}
         <div className="timer">{challenge.timeLeft}s</div>

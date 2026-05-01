@@ -41,6 +41,7 @@ export function useChallengeGame() {
   const [isPaused, setIsPaused] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [missCount, setMissCount] = useState(0);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   const { answerLogs, addAnswerLog, resetAnswerLogs } = useAnswerLogs();
 
@@ -48,15 +49,27 @@ export function useChallengeGame() {
     return items[Math.floor(Math.random() * items.length)];
   }
 
+  function pickChallengeLevel(course: ChallengeCourse): number {
+    const mainLevel = course.levels[course.levels.length - 1];
+    const lowerLevels = course.levels.filter((level) => level < mainLevel);
+
+    if (lowerLevels.length === 0) {
+      return mainLevel;
+    }
+
+    return Math.random() < 0.75 ? mainLevel : pick(lowerLevels);
+  }
+
   function startGame(course: ChallengeCourse) {
-    setIsPlaying(true);
+    setCurrentCourse(course);
+    setCountdown(3); // ← ここがスタート
+
+    setIsPlaying(false); // まだ始めない
     setIsFinished(false);
     setIsPaused(false);
+
     setTimeLeft(course.timeLimit);
     setRemaining(course.questionCount);
-    setCurrentCourse(course);
-    const level = pick(course.levels);
-    setQuestion(createQuestionByLevel(level));
     setInput("");
     setCorrectCount(0);
     setMissCount(0);
@@ -85,7 +98,7 @@ export function useChallengeGame() {
     if (!currentCourse) return;
 
     const correct = Number(input) === question.answer;
-    const level = pick(currentCourse.levels);
+    const level = pickChallengeLevel(currentCourse);
     setQuestion(createQuestionByLevel(level));
 
     if (correct) {
@@ -149,6 +162,29 @@ export function useChallengeGame() {
     setIsPlaying(false);
     setIsFinished(true);
   }
+
+
+  useEffect(() => {
+    if (countdown === null) return;
+
+    if (countdown === 0) {
+      setCountdown(null);
+      setIsPlaying(true);
+
+      if (currentCourse) {
+        const level = pickChallengeLevel(currentCourse);
+        setQuestion(createQuestionByLevel(level));
+      }
+
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setCountdown((prev) => (prev === null ? null : prev - 1));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   // タイマー
   useEffect(() => {
@@ -218,7 +254,8 @@ export function useChallengeGame() {
     correctCount,
     missCount,
     answerLogs,
-    
+    countdown,
+
     togglePause,
     deleteOne,
     endGame,

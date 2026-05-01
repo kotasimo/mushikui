@@ -44,16 +44,16 @@ const allLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 export function createQuestion(correctCount: number): Question {
   const level =
-    correctCount >= 50 ? 11 :
-      correctCount >= 45 ? 10 :
-        correctCount >= 40 ? 9 :
-          correctCount >= 35 ? 8 :
-            correctCount >= 30 ? 7 :
-              correctCount >= 25 ? 6 :
-                correctCount >= 20 ? 5 :
-                  correctCount >= 15 ? 4 :
-                    correctCount >= 10 ? 3 :
-                      correctCount >= 5 ? 2 :
+    correctCount >= 100 ? 11 :
+      correctCount >= 90 ? 10 :
+        correctCount >= 80 ? 9 :
+          correctCount >= 70 ? 8 :
+            correctCount >= 60 ? 7 :
+              correctCount >= 50 ? 6 :
+                correctCount >= 40 ? 5 :
+                  correctCount >= 30 ? 4 :
+                    correctCount >= 20 ? 3 :
+                      correctCount >= 10 ? 2 :
                         1;
 
   const questionTypesByLevel: Record<number, QuestionType[]> = {
@@ -71,25 +71,34 @@ export function createQuestion(correctCount: number): Question {
   };
 
   function pickQuestionLevel(currentLevel: number): number {
+    if (currentLevel === 1) {
+      return 1;
+    }
+
+    if (currentLevel === 2) {
+      return Math.random() < 0.7 ? 2 : 1;
+    }
+
+    if (currentLevel === 3) {
+      const r = Math.random();
+
+      if (r < 0.5) return 3;
+
+      const lowerLevels = [1, 2];
+      return pick(lowerLevels);
+    }
+
     const r = Math.random();
 
-    // 30%: 現在
     if (r < 0.3) {
       return currentLevel;
     }
 
-    // 70%: その他
     const candidates = allLevels.filter(
-      (level) =>
-        level < currentLevel || level === currentLevel + 1
+      (level) => level < currentLevel || level === currentLevel + 1
     );
 
-    // 上限ガード（Lv11のとき）
-    const valid = candidates.filter(
-      (level) => level >= 1 && level <= 11
-    );
-
-    return pick(valid);
+    return pick(candidates);
   }
 
   // console.log({ level, questionLevel, type });
@@ -162,8 +171,12 @@ export function createQuestionByLevel(level: number): Question {
   }
 
   const type = pick(types);
+  const question = createQuestionByType(type);
 
-  return createQuestionByType(type);
+  return {
+    ...question,
+    level,
+  };
 }
 
 function createQuestionByType(type: QuestionType): BaseQuestion {

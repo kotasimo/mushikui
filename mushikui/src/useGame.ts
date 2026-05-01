@@ -109,111 +109,115 @@ export function useMushikuiGame() {
 
   // --- キーボード ---
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (!isPlaying || isFinished || isPaused) return;
+  function handleKeyDown(e: KeyboardEvent) {
+    if (!isPlaying || isFinished) return;
 
-      if (/^[0-9]$/.test(e.key)) answer(e.key);
-      if (e.key === "Enter") submit();
-      if (e.key === "Backspace") deleteOne();
-      if (e.key === " ") {
-        e.preventDefault(); // スクロール防止
-        setIsPaused((prev) => !prev);
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying, isFinished, input, question, correctCount]);
-
-  // --- タイマー ---
-  // --- タイマー ---
-  useEffect(() => {
-    if (!isPlaying || isFinished || !course || isPaused) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft((t) => {
-        // 練習（カウントアップ）
-        if (course.id === "practice") {
-          return t + 1;
-        }
-
-        // タイム制（カウントダウン）
-        if (t <= 1) {
-          clearInterval(timer);
-          setIsFinished(true);
-          return 0;
-        }
-
-        return t - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isPlaying, isFinished, course, isPaused]);
-
-  // --- ベストスコア保存 ---
-  useEffect(() => {
-    if (!isFinished || !course) return;
-    if (course.id === "practice") return;
-
-    setBestScores((prev) => {
-      const prevBest = prev[course.id] ?? 0;
-
-      if (correctCount <= prevBest) return prev;
-
-      const next = {
-        ...prev,
-        [course.id]: correctCount,
-      };
-
-      localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(next));
-      setIsNewBest(true);
-      return next;
-    });
-  }, [isFinished, course, correctCount]);
-
-  useEffect(() => {
-    if (countdown === null) return;
-
-    if (countdown === 0) {
-      setCountdown(null);
-      setIsPlaying(true);
+    if (e.key === " ") {
+      e.preventDefault();
+      setIsPaused((prev) => !prev);
       return;
     }
 
-    const timer = setTimeout(() => {
-      setCountdown((prev) => (prev === null ? null : prev - 1));
-    }, 1000);
+    if (isPaused) return;
 
-    return () => clearTimeout(timer);
-  }, [countdown]);
+    if (/^[0-9]$/.test(e.key)) answer(e.key);
+    if (e.key === "Enter") submit();
+    if (e.key === "Backspace") deleteOne();
+  }
 
-  return {
-    // 状態
-    isPlaying,
-    isFinished,
-    timeLeft,
-    question,
-    input,
-    correctCount,
-    missCount,
-    bestScore,
-    bestScores,
-    course,
-    countdown,
-    isNewBest,
-    isPaused,
-    answerLogs,
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, [isPlaying, isFinished, isPaused, input, question, correctCount]);
 
-    // 操作
-    start,
-    answer,
-    submit,
-    endGame,
-    goHome,
-    deleteOne,
-    togglePause,
-    pauseGame,
-    resumeGame,
-  };
+// --- タイマー ---
+// --- タイマー ---
+useEffect(() => {
+  if (!isPlaying || isFinished || !course || isPaused) return;
+
+  const timer = setInterval(() => {
+    setTimeLeft((t) => {
+      // 練習（カウントアップ）
+      if (course.id === "practice") {
+        return t + 1;
+      }
+
+      // タイム制（カウントダウン）
+      if (t <= 1) {
+        clearInterval(timer);
+        setIsFinished(true);
+        return 0;
+      }
+
+      return t - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [isPlaying, isFinished, course, isPaused]);
+
+// --- ベストスコア保存 ---
+useEffect(() => {
+  if (!isFinished || !course) return;
+  if (course.id === "practice") return;
+
+  setBestScores((prev) => {
+    const prevBest = prev[course.id] ?? 0;
+
+    if (correctCount <= prevBest) return prev;
+
+    const next = {
+      ...prev,
+      [course.id]: correctCount,
+    };
+
+    localStorage.setItem(BEST_SCORES_KEY, JSON.stringify(next));
+    setIsNewBest(true);
+    return next;
+  });
+}, [isFinished, course, correctCount]);
+
+useEffect(() => {
+  if (countdown === null) return;
+
+  if (countdown === 0) {
+    setCountdown(null);
+    setIsPlaying(true);
+    return;
+  }
+
+  const timer = setTimeout(() => {
+    setCountdown((prev) => (prev === null ? null : prev - 1));
+  }, 1000);
+
+  return () => clearTimeout(timer);
+}, [countdown]);
+
+return {
+  // 状態
+  isPlaying,
+  isFinished,
+  timeLeft,
+  question,
+  input,
+  correctCount,
+  missCount,
+  bestScore,
+  bestScores,
+  course,
+  countdown,
+  isNewBest,
+  isPaused,
+  answerLogs,
+
+  // 操作
+  start,
+  answer,
+  submit,
+  endGame,
+  goHome,
+  deleteOne,
+  togglePause,
+  pauseGame,
+  resumeGame,
+};
 }
