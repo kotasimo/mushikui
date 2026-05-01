@@ -692,7 +692,8 @@ button:active {
 
     width: 100%;
     max-width: 100%;
-    margin-top: auto;
+    margin-top: 48px;
+    margin-bottom: 8px;
 
     padding: 8px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
