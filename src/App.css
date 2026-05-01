@@ -1,0 +1,294 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f4f4f4;
+  color: #111;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+button {
+  font-size: 24px;
+  padding: 12px 28px;
+  border: 2px solid #111;
+  background: white;
+  cursor: pointer;
+}
+
+.top {
+  width: 320px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+}
+
+.question {
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.input {
+  font-size: 32px;
+  height: 40px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+}
+
+.keypad button {
+  width: 80px;
+  height: 60px;
+}
+
+.score {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.status {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.timer {
+  font-size: 20px;
+  color: #111;
+}
+
+.question {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  margin-top: 20px;
+}
+
+.input {
+  width: 160px;
+  height: 48px;
+  border-bottom: 3px solid #111;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.best {
+  font-size: 14px;
+  color: #555;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap; /* スマホで折り返す */
+  margin-top: 24px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-item button {
+  width: 120px;
+  height: 60px;
+  font-size: 18px;
+}
+
+.best {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+.countdown {
+  font-size: 96px;
+  font-weight: 700;
+}
+
+.new-best-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #e6a700;
+}
+
+.new-best-score {
+  font-size: 72px;
+  font-weight: 900;
+  margin-bottom: 24px;
+}
+/* 
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 20px;
+  background: #fffdf5;
+  max-width: 1000px;
+  margin: 0 auto;
+} */
+
+.screen {
+  width: min(100%, 720px);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: #fffdf5;
+}
+
+button {
+  width: 140px;
+  height: 50px;
+  font-size: 16px;
+}
+
+.timer {
+  font-size: 32px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* ← ここで間を調整 */
+}
+
+.game-screen {
+  min-height: 100vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: #fffdf5;
+  width: min(100%, 720px);
+  margin: 0 auto;
+}
+
+.game-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.score-box {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-size: 14px;
+  color: #444;
+}
+
+button {
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 0 #aaa;
+  border-radius: 5px;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #aaa;
+}
+
+button:hover {
+  background: #eee;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.best {
+  font-size: 18px;
+  color: rgb(52, 52, 52);
+  margin: 15px;
+}
+
+.score-box {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.score-text {
+  font-size: 206
+  px;
+  color: black;
+}
+
+.reset-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+  border: 2px solid #000;  /* ← 黒枠しっかり */
+  color: #000;
+
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: none;
+}
+
+.reset-btn:hover {
+  background: #ddd;
+}
+
+.reset-btn:active {
+  transform: scale(0.9);
+}
+
+.input {
+  font-size: 4515
+  px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}

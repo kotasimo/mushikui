@@ -2,12 +2,14 @@ import "./App.css";
 import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
 import { NewBestScreen } from "./components/bestScreen";
-import { MobileKeypad } from "./components/MobileKeypad";
 import { useSurvivalGame } from "./suvival";
 import { TimerCircle } from "./components/TimerCircle";
 import { useState, useEffect } from "react";
 import { useChallengeGame } from "./useChallenge";
 import { challengeCourses } from "./challenge";
+import { ResultScreen } from "./components/result";
+import { GameScreen } from "./components/gamescreen";
+import { TimerView } from "./components/TimeView";
 
 export default function App() {
   const survival = useSurvivalGame();
@@ -18,9 +20,6 @@ export default function App() {
     "home" | "time-select" | "survival-select" | "challenge-select"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
-
-
-  const isMobile = window.innerWidth <= 768;
 
   useEffect(() => {
     if (survival.missCount === 0) return;
@@ -48,85 +47,46 @@ export default function App() {
     );
   }
 
-
   if (survival.isPlaying) {
     return (
-      <main className="game-screen">
-
-        <button className="finish-button" onClick={survival.endGame}>finish</button>
-
-        {survival.isPaused && <div className="paused">STOP</div>}
-
-        <div className="game-center">
-
-          <TimerCircle
-            timeLeftMs={survival.timeLeftMs}
-            totalTimeMs={survival.answerTimeMs}
-          />
-
-          <div className="question">{survival.question?.text}</div>
-          <div className="input">{survival.input || ""}</div>
-
-          {isMobile && (
-            <MobileKeypad
-              onNumber={(n) => survival.answer(n)}
-              onDelete={() => survival.deleteOne()}
-              onSubmit={survival.submit}
-              togglePause={survival.togglePause}
-              isPaused={survival.isPaused}
-            />
-          )}
-
-          <div className="score-box">
-            <div className="correct">
-              {survival.correctCount} ✓
-            </div>
-
-            <div className={`miss ${flashMiss ? "flash" : ""}`}>
-              {survival.missCount} ✖
-            </div>
-          </div>
-
-        </div>
-      </main>
+      <GameScreen
+        question={survival.question?.text}
+        input={survival.input}
+        correct={survival.correctCount}
+        miss={survival.missCount}
+        onFinish={survival.endGame}
+        onNumber={(n) => survival.answer(String(n))}
+        onDelete={survival.deleteOne}
+        onSubmit={survival.submit}
+        togglePause={survival.togglePause}
+        isPaused={survival.isPaused}
+      >
+        <TimerCircle
+          timeLeftMs={survival.timeLeftMs}
+          totalTimeMs={survival.answerTimeMs}
+        />
+      </GameScreen>
     );
   }
 
   if (challenge.isPlaying) {
     return (
-      <main className="game-screen">
-        <button className="finish-button" onClick={challenge.endGame}>
-          finish
-        </button>
-
-        <div className="game-center">
-          <div className="timer">{challenge.timeLeft}s</div>
-          <div className="remaining">{challenge.remaining} left</div>
-
-          <div className="question">{challenge.question?.text}</div>
-          <div className="input">{challenge.input || ""}</div>
-
-          {isMobile && (
-            <MobileKeypad
-              onNumber={challenge.answer}
-              onDelete={challenge.deleteOne}
-              onSubmit={challenge.submit}
-              togglePause={challenge.togglePause}
-              isPaused={challenge.isPaused}
-            />
-          )}
-
-          <div className="score-box">
-            <div className="correct">
-              {challenge.correctCount} ✓
-            </div>
-            <div className={`miss ${flashMiss ? "flash" : ""}`}>
-              {challenge.missCount} ✖
-            </div>
-          </div>
-
-        </div>
-      </main>
+      <GameScreen
+        question={challenge.question?.text}
+        input={challenge.input}
+        correct={challenge.correctCount}
+        miss={challenge.missCount}
+        onFinish={challenge.endGame}
+        onNumber={challenge.answer}
+        onDelete={challenge.deleteOne}
+        onSubmit={challenge.submit}
+        togglePause={challenge.togglePause}
+        isPaused={challenge.isPaused}
+      >
+        {/* 👇 ここが children */}
+        <div className="timer">{challenge.timeLeft}s</div>
+        <div className="remaining">{challenge.remaining} left</div>
+      </GameScreen>
     );
   }
 
@@ -142,19 +102,14 @@ export default function App() {
 
   if (survival.isFinished) {
     return (
-      <main className="screen">
-        <h1>RESULT</h1>
-
+      <ResultScreen onRetry={survival.startGame} onHome={survival.goHome}>
         <div className="result-score">
-          <div className="score">Score: {survival.correctCount}</div>
-          <div className="miss">Miss: {survival.missCount}</div>
+          <div>Score: {survival.correctCount}</div>
+          <div>Miss: {survival.missCount}</div>
         </div>
 
-        <div className="best">Best: {survival.bestScore}</div>
-
-        <button onClick={survival.startGame}>Try again</button>
-        <button onClick={survival.goHome}>HOME</button>
-      </main>
+        <div>Best: {survival.bestScore}</div>
+      </ResultScreen>
     );
   }
 
@@ -168,53 +123,36 @@ export default function App() {
     );
   }
 
-
   if (game.isFinished) {
     return (
-      <main className="screen">
-        <h1>RESULT</h1>
-
+      <ResultScreen
+        onRetry={game.course ? () => game.start(game.course!) : undefined}
+        onHome={game.goHome}
+      >
         <div className="result-score">
           <div className="score">Score: {game.correctCount}</div>
           <div className="miss">Miss: {game.missCount}</div>
         </div>
 
         <div className="best">Best: {game.bestScore}</div>
-
-        {game.course && (
-          <button onClick={() => game.start(game.course!)}>Try again</button>
-        )}
-
-        <button onClick={game.goHome}>HOME</button>
-      </main>
+      </ResultScreen>
     );
   }
 
-
   if (challenge.isFinished) {
     return (
-      <main className="screen">
-        <h1>RESULT</h1>
+      <ResultScreen
+        onRetry={() => {
+          challenge.goHome();
+          setScreen("challenge-select");
+        }}
+        onHome={() => {
+          challenge.goHome();
+          setScreen("home");
+        }}
+      >
         <div>{challenge.remaining === 0 ? "CLEAR" : "FAILED"}</div>
-
-        <button
-          onClick={() => {
-            challenge.goHome();
-            setScreen("challenge-select");
-          }}
-        >
-          Play Again
-        </button>
-
-        <button
-          onClick={() => {
-            challenge.goHome();
-            setScreen("home");
-          }}
-        >
-          Home
-        </button>
-      </main>
+      </ResultScreen>
     );
   }
 
@@ -252,9 +190,7 @@ export default function App() {
 
         <div className="menu-grid">
           <div className="menu-item">
-            <button onClick={() => setScreen("time-select")}>
-              タイム
-            </button>
+            <button onClick={() => setScreen("time-select")}>タイム</button>
           </div>
 
           <div className="menu-item">
@@ -270,7 +206,11 @@ export default function App() {
           </div>
 
           <div className="menu-item">
-            <button onClick={() => game.start(courses.find(c => c.id === "practice")!)}>
+            <button
+              onClick={() =>
+                game.start(courses.find((c) => c.id === "practice")!)
+              }
+            >
               練習
             </button>
           </div>
@@ -351,13 +291,9 @@ export default function App() {
 
                 <div className="menu-info">
                   {best.cleared ? (
-                    <div className="clear">
-                      ✓ {best.bestTime}s
-                    </div>
+                    <div className="clear">✓ {best.bestTime}s</div>
                   ) : (
-                    <div className="not-clear">
-                      □ {best.bestCount}
-                    </div>
+                    <div className="not-clear">□ {best.bestCount}</div>
                   )}
                 </div>
               </div>
@@ -371,46 +307,26 @@ export default function App() {
   }
 
   return (
-    <main className="game-screen">
-
-      <button className="finish-button" onClick={game.endGame}>finish</button>
-
-      <div className="game-center">
-        {game.course?.id === "practice" ? (
-          <div className="timer">
-            <span>{game.timeLeft}s</span>
-            <span>{game.correctCount + game.missCount}問</span>
-          </div>
-        ) : (
-          <div className="timer">{game.timeLeft}s</div>
-        )}
-
-        {game.isPaused && <div className="paused">STOP</div>}
-
-        <div className="question">{game.question?.text}</div>
-        <div className="input">{game.input || ""}</div>
-
-        {isMobile && (
-          <MobileKeypad
-            onNumber={game.answer}
-            onDelete={game.deleteOne}
-            onSubmit={game.submit}
-            togglePause={game.togglePause}
-            isPaused={game.isPaused}
-          />
-        )}
-
-        <div className="score-box">
-          <div className="correct">
-            {game.correctCount} ✓
-          </div>
-
-          <div className={`miss ${flashMiss ? "flash" : ""}`}>
-            {game.missCount} ✖
-          </div>
-        </div>
-
-      </div>
-    </main>
+    <GameScreen
+      question={game.question?.text}
+      input={game.input}
+      correct={game.correctCount}
+      miss={game.missCount}
+      onFinish={game.endGame}
+      onNumber={(n) => game.answer(String(n))}
+      onDelete={game.deleteOne}
+      onSubmit={game.submit}
+      togglePause={game.togglePause}
+      isPaused={game.isPaused}
+    >
+      <TimerView
+        timeLeft={game.timeLeft}
+        count={
+          game.course?.id === "practice"
+            ? game.correctCount + game.missCount
+            : undefined
+        }
+      />
+    </GameScreen>
   );
 }

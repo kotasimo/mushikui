@@ -38,16 +38,16 @@ function pick<T>(items: T[]): T {
 
 export function createQuestion(correctCount: number): Question {
   const level =
-    correctCount >= 130 ? 11 :
-      correctCount >= 90 ? 10 :
-        correctCount >= 80 ? 9 :
-          correctCount >= 70 ? 8 :
-            correctCount >= 60 ? 7 :
-              correctCount >= 50 ? 6 :
-                correctCount >= 40 ? 5 :
-                  correctCount >= 30 ? 4 :
-                    correctCount >= 20 ? 3 :
-                      correctCount >= 10 ? 2 :
+    correctCount >= 50 ? 11 :
+      correctCount >= 45 ? 10 :
+        correctCount >= 40 ? 9 :
+          correctCount >= 35 ? 8 :
+            correctCount >= 30 ? 7 :
+              correctCount >= 25 ? 6 :
+                correctCount >= 20 ? 5 :
+                  correctCount >= 15 ? 4 :
+                    correctCount >= 10 ? 3 :
+                      correctCount >= 5 ? 2 :
                         1;
 
   let types: QuestionType[];

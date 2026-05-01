@@ -1,0 +1,79 @@
+import type { Course } from "./courses";
+
+export type Question = {
+  text: string;
+  answer: number;
+};
+
+function rand(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function createQuestion(correctCount: number, course?: Course): Question {
+  const level = correctCount >= 20 ? 3 : correctCount >= 10 ? 2 : 1;
+
+  const ops =
+    course?.id === "practice"
+      ? ["+", "-", "×", "÷"]
+      : level === 1
+        ? ["+", "-"]
+        : level === 2
+          ? ["+", "-", "×"]
+          : ["+", "-", "×", "÷"];
+
+  const op = ops[Math.floor(Math.random() * ops.length)];
+
+  // --- 足し算 ---
+  if (op === "+") {
+    const a = rand(1, level === 1 ? 9 : 20);
+    const b = rand(1, level === 1 ? 9 : 20);
+    const result = a + b;
+
+    if (Math.random() < 0.5) {
+      return { text: `□ + ${b} = ${result}`, answer: a };
+    } else {
+      return { text: `${a} + □ = ${result}`, answer: b };
+    }
+  }
+
+  // --- 引き算 ---
+  if (op === "-") {
+    const a = rand(1, level === 1 ? 9 : 20);
+    const b = rand(1, a); // マイナス防止
+
+    if (Math.random() < 0.5) {
+      return { text: `□ - ${b} = ${a - b}`, answer: a };
+    } else {
+      return { text: `${a} - □ = ${b}`, answer: a - b };
+    }
+  }
+
+  // --- 掛け算 ---
+  if (op === "×") {
+    const a = rand(1, 9);
+    const b = rand(2, 9);
+    const result = a * b;
+
+    if (Math.random() < 0.5) {
+      return { text: `□ × ${b} = ${result}`, answer: a };
+    } else {
+      return { text: `${a} × □ = ${result}`, answer: b };
+    }
+  }
+
+  // --- 割り算 ---
+  const a = rand(2, 9);
+  const b = rand(2, 9);
+
+  if (Math.random() < 0.5) {
+    return {
+      text: `□ ÷ ${b} = ${a}`,
+      answer: a * b,
+    };
+  } else {
+    return {
+      text: `${a * b} ÷ □ = ${b}`,
+      answer: a,
+    };
+  }
+}

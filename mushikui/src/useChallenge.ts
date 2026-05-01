@@ -71,7 +71,7 @@ export function useChallengeGame() {
     setMissCount(0);
   }
 
-  function answer(n: string) {
+  function answer(n: number) {
     if (!isPlaying || isFinished || isPaused) return;
     setInput((prev) => prev + n);
   }
@@ -174,7 +174,7 @@ export function useChallengeGame() {
       if (isPaused) return;
 
       if (/^[0-9]$/.test(e.key)) {
-        answer(e.key);
+        answer(Number(e.key));
         return;
       }
 
