@@ -782,4 +782,31 @@ button:active {
     font-size: 28px;
     top: -6px;
   }
+
+  .game-screen {
+    height: 100dvh;
+    padding: 12px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .game-center {
+    height: auto;
+    flex: 0 0 auto;
+
+    transform: scale(0.82);
+    transform-origin: top center;
+
+    justify-content: flex-start;
+    padding-top: 32px;
+  }
+
+  .mobile-keypad {
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
 }
