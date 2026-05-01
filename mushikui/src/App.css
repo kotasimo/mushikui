@@ -19,6 +19,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  position: relative;
 }
 
 .game-screen {
@@ -350,4 +351,131 @@ button:active {
 
 .not-clear {
   color: #555;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+
+  font-size: 14px;
+  border-radius: 15%;
+
+  border: 1px solid #111;
+  background: white;
+  box-shadow: 0 2px 0 #aaa;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 15px;
+}
+
+.log-table th,
+.log-table td {
+  border: 1px solid #d0d0d0;
+  padding: 9px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.log-table th {
+  position: sticky;
+  top: 0;
+  background: #a2a2a2;
+  z-index: 1;
+  font-weight: 1000;
+  font-size: 20px;
+}
+
+.log-table th:nth-child(1),
+.log-table td:nth-child(1) {
+  width: 12%;
+}
+
+.log-table th:nth-child(2),
+.log-table td:nth-child(2) {
+  width: 16%;
+}
+
+.log-table th:nth-child(3),
+.log-table td:nth-child(3) {
+  width: 52%;
+}
+
+.log-table th:nth-child(4),
+.log-table td:nth-child(4) {
+  width: 20%;
+}
+
+.wrong-row {
+  background: #ffe0e0;
+}
+
+.wrong-row td {
+  color: #c4002f;
+  font-weight: 700;
+}
+
+.log-screen {
+  justify-content: flex-start;
+  gap: 0;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.log-title {
+  margin-top: 80px;
+  margin-bottom: 20px;
+  font-size: 52px;
+  line-height: 1;
+}
+
+.log-table-wrap {
+  width: 90%;
+  max-width: 760px;
+  height: calc(100vh - 150px);
+
+  margin: 0 auto;
+  overflow-y: auto;
+  margin-bottom: 20px;
+
+  box-sizing: border-box;
+  padding-bottom: 24px;
+
+  border: 1px solid #0a0a0a;
+  border-radius: 14px;
+  background-color: white;
+}
+
+.history-button {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+
+  font-size: 14px;
+  border-radius: 5px;
+
+  border: 1px solid #111;
+  background: white;
+  box-shadow: 0 2px 0 #aaa;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

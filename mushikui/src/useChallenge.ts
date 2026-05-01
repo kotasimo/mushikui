@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createQuestionByLevel, type Question } from "./createQuestion";
 import type { ChallengeCourse } from "./challenge";
+import { useAnswerLogs } from "./hooks/useAnswerLogs";
 
 type ChallengeBest = {
   bestCount: number;
@@ -41,6 +42,8 @@ export function useChallengeGame() {
   const [correctCount, setCorrectCount] = useState(0);
   const [missCount, setMissCount] = useState(0);
 
+  const { answerLogs, addAnswerLog, resetAnswerLogs } = useAnswerLogs();
+
   function pick<T>(items: T[]): T {
     return items[Math.floor(Math.random() * items.length)];
   }
@@ -57,6 +60,7 @@ export function useChallengeGame() {
     setInput("");
     setCorrectCount(0);
     setMissCount(0);
+    resetAnswerLogs();
   }
 
   function goHome() {
@@ -90,6 +94,16 @@ export function useChallengeGame() {
     } else {
       setMissCount((prev) => prev + 1);
     }
+
+    const isCorrect = input !== "" && Number(input) === question.answer;
+
+    addAnswerLog({
+      question: question.text,
+      correctAnswer: question.answer,
+      userAnswer: input,
+      isCorrect,
+      level: question.level,
+    });
 
     setInput("");
   }
@@ -203,8 +217,8 @@ export function useChallengeGame() {
     isPaused,
     correctCount,
     missCount,
-
-
+    answerLogs,
+    
     togglePause,
     deleteOne,
     endGame,

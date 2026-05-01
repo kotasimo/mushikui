@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createQuestion, type Question } from "./createQuestion";
+import { useAnswerLogs } from "./hooks/useAnswerLogs";
 
 const getSurvivalBestKey = (timeMs: number) =>
     `mushikui_survival_best_${timeMs}`;
@@ -25,6 +26,8 @@ export function useSurvivalGame() {
         return saved ? Number(saved) : 0;
     });
 
+    const { answerLogs, addAnswerLog, resetAnswerLogs } = useAnswerLogs();
+
     function startGame() {
         setIsPlaying(false);
         setIsFinished(false);
@@ -37,6 +40,7 @@ export function useSurvivalGame() {
         setQuestionNumber(0);
         setIsNewBest(false);
         setCountdown(3);
+        resetAnswerLogs();
     }
 
     function deleteOne() {
@@ -57,6 +61,16 @@ export function useSurvivalGame() {
         if (!question || !isPlaying || isFinished || isPaused) return;
 
         const isCorrect = input !== "" && Number(input) === question.answer;
+
+        if (question) {
+            addAnswerLog({
+                question: question.text,
+                correctAnswer: question.answer,
+                userAnswer: input,
+                isCorrect,
+                level: question.level,
+            });
+        }
 
         const nextCorrectCount = isCorrect ? correctCount + 1 : correctCount;
         const nextMissCount = isCorrect ? missCount : missCount + 1;
@@ -200,6 +214,7 @@ export function useSurvivalGame() {
         answerTimeMs,
         countdown,
         isNewBest,
+        answerLogs,
         setAnswerTimeMs,
         getBestScore,
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createQuestion, type Question } from "./createQuestion";
 import type { Course } from "./courses";
+import type { AnswerLog } from "./components/types";
 
 const BEST_SCORES_KEY = "mushikui_best_score";
 
@@ -16,6 +17,7 @@ export function useMushikuiGame() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isNewBest, setIsNewBest] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [answerLogs, setAnswerLogs] = useState<AnswerLog[]>([]);
 
   const [bestScores, setBestScores] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem(BEST_SCORES_KEY);
@@ -33,7 +35,7 @@ export function useMushikuiGame() {
     setInput("");
     setIsFinished(false);
     setQuestion(createQuestion(0));
-
+    setAnswerLogs([]);
     setCountdown(3);
     setIsPlaying(false);
     setIsNewBest(false);
@@ -47,6 +49,14 @@ export function useMushikuiGame() {
   function togglePause() {
     if (!isPlaying || isFinished) return;
     setIsPaused((prev) => !prev);
+  }
+
+  function pauseGame() {
+    setIsPaused(true);
+  }
+
+  function resumeGame() {
+    setIsPaused(false);
   }
 
   // --- 入力 ---
@@ -68,6 +78,19 @@ export function useMushikuiGame() {
       setMissCount((prev) => prev + 1);
       setQuestion(createQuestion(correctCount));
     }
+
+    const isCorrect = Number(input) === question.answer;
+
+    setAnswerLogs((prev) => [
+      ...prev,
+      {
+        question: question.text,
+        correctAnswer: question.answer,
+        userAnswer: input,
+        isCorrect,
+        level: question.level,
+      },
+    ]);
 
     setInput("");
   }
@@ -180,6 +203,7 @@ export function useMushikuiGame() {
     countdown,
     isNewBest,
     isPaused,
+    answerLogs,
 
     // 操作
     start,
@@ -189,5 +213,7 @@ export function useMushikuiGame() {
     goHome,
     deleteOne,
     togglePause,
+    pauseGame,
+    resumeGame,
   };
 }

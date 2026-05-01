@@ -11,6 +11,7 @@ import { ResultScreen } from "./components/result";
 import { GameScreen } from "./components/gamescreen";
 import { TimerView } from "./components/TimeView";
 import { MenuButton } from "./components/MenuButton";
+import { AnswerLogScreen } from "./components/AnswerLogScreen";
 
 export default function App() {
   const survival = useSurvivalGame();
@@ -18,7 +19,14 @@ export default function App() {
   const challenge = useChallengeGame();
 
   const [screen, setScreen] = useState<
-    "home" | "time-select" | "survival-select" | "challenge-select"
+    | "home"
+    | "time-select"
+    | "survival-select"
+    | "challenge-select"
+    | "survival-log"
+    | "game-log"
+    | "challenge-log"
+    | "practice-log"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
 
@@ -55,6 +63,46 @@ export default function App() {
       </main>
     );
   }
+
+  if (screen === "survival-log") {
+    return (
+      <AnswerLogScreen
+        logs={survival.answerLogs}
+        onBack={() => setScreen("home")}
+      />
+    );
+  }
+
+  if (screen === "game-log") {
+    return (
+      <AnswerLogScreen
+        logs={game.answerLogs}
+        onBack={() => setScreen("home")}
+      />
+    );
+  }
+
+  if (screen === "challenge-log") {
+    return (
+      <AnswerLogScreen
+        logs={challenge.answerLogs}
+        onBack={() => setScreen("home")}
+      />
+    );
+  }
+
+  if (screen === "practice-log") {
+    return (
+      <AnswerLogScreen
+        logs={game.answerLogs}
+        onBack={() => {
+          game.resumeGame();
+          setScreen("home");
+        }}
+      />
+    );
+  }
+
 
   if (survival.isPlaying) {
     return (
@@ -106,7 +154,10 @@ export default function App() {
       <NewBestScreen
         score={survival.correctCount}
         onRetry={survival.startGame}
-        onHome={game.goHome}
+        onHome={() => {
+          survival.goHome();
+          setScreen("home");
+        }}
       />
     );
   }
@@ -120,17 +171,27 @@ export default function App() {
         </div>
 
         <div>Best: {survival.bestScore}</div>
+
+        <button onClick={() => setScreen("survival-log")}>
+          履歴
+        </button>
       </ResultScreen>
     );
   }
 
   if (game.isFinished && game.isNewBest && game.course) {
     return (
-      <NewBestScreen
-        score={game.correctCount}
-        onRetry={() => game.start(game.course!)}
-        onHome={game.goHome}
-      />
+      <div>
+        <NewBestScreen
+          score={game.correctCount}
+          onRetry={() => game.start(game.course!)}
+          onHome={game.goHome}
+        />
+        <button onClick={() => setScreen("game-log")}>
+          履歴
+        </button>
+      </div>
+
     );
   }
 
@@ -146,6 +207,9 @@ export default function App() {
         </div>
 
         <div className="best">Best: {game.bestScore}</div>
+        <button onClick={() => setScreen("game-log")}>
+          履歴
+        </button>
       </ResultScreen>
     );
   }
@@ -163,6 +227,10 @@ export default function App() {
         }}
       >
         <div>{challenge.remaining === 0 ? "CLEAR" : "FAILED"}</div>
+
+        <button onClick={() => setScreen("challenge-log")}>
+          履歴
+        </button>
       </ResultScreen>
     );
   }
@@ -189,7 +257,7 @@ export default function App() {
           })}
         </div>
 
-        <button onClick={() => setScreen("home")}>Back</button>
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
       </main>
     );
   }
@@ -251,7 +319,7 @@ export default function App() {
             }}
           />
         </div>
-        <button onClick={() => setScreen("home")}>Back</button>
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
       </main>
     );
   }
@@ -287,7 +355,7 @@ export default function App() {
           })}
         </div>
 
-        <button onClick={() => setScreen("home")}>Back</button>
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
       </main>
     );
   }
@@ -314,6 +382,19 @@ export default function App() {
             : undefined
         }
       />
+
+      {game.course?.id === "practice" && (
+        <button
+          className="history-button"
+          onClick={() => {
+            console.log("履歴ボタン押した");
+            game.pauseGame();
+            setScreen("practice-log");
+          }}
+        >
+          履歴
+        </button>
+      )}
     </GameScreen>
   );
 }

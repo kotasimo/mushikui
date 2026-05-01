@@ -1,6 +1,10 @@
-export type Question = {
+type BaseQuestion = {
   text: string;
   answer: number;
+};
+
+export type Question = BaseQuestion & {
+  level: number;
 };
 
 type QuestionType =
@@ -36,6 +40,8 @@ function pick<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+const allLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
 export function createQuestion(correctCount: number): Question {
   const level =
     correctCount >= 50 ? 11 :
@@ -50,85 +56,52 @@ export function createQuestion(correctCount: number): Question {
                       correctCount >= 5 ? 2 :
                         1;
 
-  let types: QuestionType[];
+  const questionTypesByLevel: Record<number, QuestionType[]> = {
+    1: ["oneDigitAdd", "oneDigitSub"],
+    2: ["oneDigitMul", "oneDigitDiv"],
+    3: ["twoDigitAddOneDigit", "twoDigitSubOneDigit"],
+    4: ["twoDigitMulOneDigit", "twoDigitDivOneDigit"],
+    5: ["twoDigitAddTwoDigitNoCarry", "twoDigitSubTwoDigitNoBorrow"],
+    6: ["twoDigitAddTwoDigitCarry", "twoDigitSubTwoDigitBorrow"],
+    7: ["twoDigitMulOneDigitFull", "threeDigitDivOneDigit"],
+    8: ["twoDigitAddTwoDigitAny", "threeDigitSubTwoDigit"],
+    9: ["teenMulTenToThirty", "teenDivTenToThirty"],
+    10: ["twoDigitMulTwoDigitUnder1000", "threeDigitDivTwoDigit"],
+    11: ["twoDigitMulTwoDigitFull", "fourDigitDivTwoDigit"],
+  };
 
-  if (level === 1) {
-    // Lv1は足し算・引き算だけ
-    types = ["oneDigitAdd", "oneDigitSub"];
-  } else {
-    // Lv2以降は「加減算」か「乗除算」を50%で選ぶ
-    const isAddSub = Math.random() < 0.5;
+  function pickQuestionLevel(currentLevel: number): number {
+    const r = Math.random();
 
-    if (isAddSub) {
-      types = ["oneDigitAdd", "oneDigitSub"];
-
-      if (level >= 3) {
-        types.push("twoDigitAddOneDigit", "twoDigitSubOneDigit");
-      }
-
-      if (level >= 5) {
-        types.push(
-          "twoDigitAddTwoDigitNoCarry",
-          "twoDigitSubTwoDigitNoBorrow"
-        );
-      }
-
-      if (level >= 6) {
-        types.push(
-          "twoDigitAddTwoDigitCarry",
-          "twoDigitSubTwoDigitBorrow"
-        );
-      }
-
-      if (level >= 8) {
-        types.push(
-          "twoDigitAddTwoDigitAny",
-          "threeDigitSubTwoDigit"
-        );
-      }
-
-    } else {
-      types = ["oneDigitMul", "oneDigitDiv"];
-
-      if (level >= 4) {
-        types.push("twoDigitMulOneDigit", "twoDigitDivOneDigit");
-      }
-
-      if (level >= 7) {
-        types.push(
-          "twoDigitMulOneDigitFull",
-          "threeDigitDivOneDigit"
-        );
-      }
-
-      if (level >= 9) {
-        types.push(
-          "teenMulTenToThirty",
-          "teenDivTenToThirty"
-        );
-      }
-
-      if (level >= 10) {
-        types.push(
-          "twoDigitMulTwoDigitUnder1000",
-          "threeDigitDivTwoDigit"
-        );
-      }
-
-      if (level >= 11) {
-        types.push(
-          "twoDigitMulTwoDigitFull",
-          "fourDigitDivTwoDigit"
-        );
-      }
+    // 30%: 現在
+    if (r < 0.3) {
+      return currentLevel;
     }
+
+    // 70%: その他
+    const candidates = allLevels.filter(
+      (level) =>
+        level < currentLevel || level === currentLevel + 1
+    );
+
+    // 上限ガード（Lv11のとき）
+    const valid = candidates.filter(
+      (level) => level >= 1 && level <= 11
+    );
+
+    return pick(valid);
   }
 
-  const type = pick(types);
+  // console.log({ level, questionLevel, type });
 
-  console.log({ level, types, type });
+  const questionLevel = pickQuestionLevel(level);
+  const type = pick(questionTypesByLevel[questionLevel]);
+  const question = createQuestionByType(type);
 
-  return createQuestionByType(type);
+  return {
+    ...question,
+    level: questionLevel,
+  };
 }
 
 export function createQuestionByLevel(level: number): Question {
@@ -193,7 +166,7 @@ export function createQuestionByLevel(level: number): Question {
   return createQuestionByType(type);
 }
 
-function createQuestionByType(type: QuestionType): Question {
+function createQuestionByType(type: QuestionType): BaseQuestion {
   switch (type) {
     case "oneDigitAdd":
       return createAdd(rand(1, 9), rand(1, 9));
@@ -304,8 +277,7 @@ function createQuestionByType(type: QuestionType): Question {
     }
   }
 }
-
-function createAdd(a: number, b: number): Question {
+function createAdd(a: number, b: number): BaseQuestion {
   const result = a + b;
 
   if (Math.random() < 0.5) {
@@ -315,7 +287,7 @@ function createAdd(a: number, b: number): Question {
   return { text: `${a} + □ = ${result}`, answer: b };
 }
 
-function createSub(a: number, b: number): Question {
+function createSub(a: number, b: number): BaseQuestion {
   const bigger = Math.max(a, b);
   const smaller = Math.min(a, b);
   const result = bigger - smaller;
@@ -327,7 +299,7 @@ function createSub(a: number, b: number): Question {
   return { text: `${bigger} - □ = ${result}`, answer: smaller };
 }
 
-function createMul(a: number, b: number): Question {
+function createMul(a: number, b: number): BaseQuestion {
   const result = a * b;
 
   if (Math.random() < 0.5) {
@@ -337,7 +309,7 @@ function createMul(a: number, b: number): Question {
   return { text: `${a} × □ = ${result}`, answer: b };
 }
 
-function createDiv(a: number, b: number): Question {
+function createDiv(a: number, b: number): BaseQuestion {
   const result = a * b;
 
   if (Math.random() < 0.5) {
