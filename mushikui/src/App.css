@@ -657,6 +657,10 @@ button:active {
   font-weight: 1000;
 }
 
+.monster-hit {
+  animation: hit 0.18s ease;
+}
+
 @media (max-width: 768px) {
   .game-screen {
     height: 100dvh;
@@ -748,5 +752,57 @@ button:active {
    .app-container {
     max-width: 100%;
     padding: 0 12px;
+  }
+
+  @media (max-width: 768px) {
+  .result-screen {
+    height: 100dvh;
+    padding: 52px 16px 20px;
+    overflow: hidden;
+  }
+
+  .result-header {
+    margin-bottom: 16px;
+  }
+
+  .result-title {
+    font-size: 44px;
+  }
+
+  .result-time,
+  .result-score-main {
+    font-size: 52px;
+  }
+
+  .result-history .log-table-wrap,
+  .result-body .log-table-wrap {
+    max-height: 48dvh;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .result-retry-button {
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+}
+}
+
+.monster-hit {
+  animation: hit 0.18s ease;
+}
+
+@keyframes hit {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  40% {
+    transform: scale(0.97);   /* ← 縮む */
+    filter: brightness(0.95); /* ← 少し暗く（ダメージ感） */
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
   }
 }

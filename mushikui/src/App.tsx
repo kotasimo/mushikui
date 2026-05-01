@@ -31,6 +31,7 @@ export default function App() {
     | "practice-log"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
+  const [isHit, setIsHit] = useState(false);
 
   function handleGameNumber(n: number) {
     game.answer(String(n));
@@ -49,6 +50,13 @@ export default function App() {
     }, 150); // 一瞬
     return () => clearTimeout(t);
   }, [survival.missCount]);
+
+  useEffect(() => {
+    if (challenge.correctCount === 0) return;
+
+    setIsHit(true);
+    setTimeout(() => setIsHit(false), 180);
+  }, [challenge.correctCount]);
 
   if (game.countdown !== null) {
     return (
@@ -165,7 +173,7 @@ export default function App() {
         countdown={challenge.countdown}
       >
         {/* 👇 ここが children */}
-        <div className="monster-area">
+        <div className={`monster-area ${isHit ? "monster-hit" : ""}`}>
           {/* タイマー（上に重ねる） */}
           <div className="timer">{challenge.timeLeft}s</div>
 
@@ -234,6 +242,8 @@ export default function App() {
       </ResultScreen>
     );
   }
+
+
 
   if (challenge.isFinished) {
     const clearTime =
@@ -417,7 +427,6 @@ export default function App() {
         <button
           className="history-button"
           onClick={() => {
-            console.log("履歴ボタン押した");
             game.pauseGame();
             setScreen("practice-log");
           }}
