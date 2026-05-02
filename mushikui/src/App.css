@@ -862,3 +862,25 @@ button:active {
     filter: brightness(1);
   }
 }
+
+.howto-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 5%;
+  border: 1px solid #111;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  box-shadow: 0 2px 0 #aaa;
+}

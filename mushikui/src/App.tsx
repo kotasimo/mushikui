@@ -14,7 +14,6 @@ import { AnswerLogScreen } from "./components/AnswerLogScreen";
 import { AnswerLogTable } from "./components/AnswerLogTable";
 import { monsters } from "./monster";
 
-
 export default function App() {
   const survival = useSurvivalGame();
   const game = useMushikuiGame();
@@ -29,6 +28,7 @@ export default function App() {
     | "game-log"
     | "challenge-log"
     | "practice-log"
+    | "how-to"
   >("home");
   const [flashMiss, setFlashMiss] = useState(false);
   const [isHit, setIsHit] = useState(false);
@@ -253,7 +253,7 @@ export default function App() {
 
     return (
       <ResultScreen
-        title={challenge.remaining === 0 ? "CLEAR" : "FAILED"}
+        title={challenge.remaining === 0 ? "クリア" : "失敗"}
         timeText={`${clearTime}s`}
         onRetry={() => {
           if (challenge.currentCourse) {
@@ -306,6 +306,10 @@ export default function App() {
       <main className="screen">
         <h1>虫食い算</h1>
 
+        <button className="howto-button" onClick={() => setScreen("how-to")}>
+          how
+        </button>
+
         <div className="menu-grid">
           <MenuButton label="タイム" onClick={() => setScreen("time-select")} />
 
@@ -322,10 +326,48 @@ export default function App() {
     );
   }
 
+  if (screen === "how-to") {
+    return (
+      <main className="screen">
+        <button
+          className="back-button"
+          onClick={() => setScreen("home")}
+        >
+          Home
+        </button>
+
+        <div className="how-to">
+          <h1>あそびかた</h1>
+
+          <h2>虫食い算とは？</h2>
+          <p>
+            □に入る数字を見つけるゲーム
+          </p>
+
+          <h2>モード</h2>
+          <p><b>タイム</b>：制限時間内に、どこまで解けるか。</p>
+          <p><b>サバイバル</b>：ミスと時間との勝負。どこまで生き残れる？</p>
+          <p><b>Challenge</b>：問題を解いてモンスターを削る。30問で撃破。</p>
+          <p><b>Practice</b>：好きなだけ練習。</p>
+
+          <h2>操作</h2>
+          <p>数字を入力して、Enterで答える。</p>
+          <p>Backspaceで1文字消す。</p>
+          <p>Spaceで一時停止。</p>
+        </div>
+      </main>
+    );
+  }
+
   if (!game.isPlaying && screen === "survival-select") {
     return (
       <main className="screen">
         <h1>サバイバル</h1>
+
+        <p className="mode-desc">
+          数字は「1問あたりの制限時間（秒）」を表します。
+          3回ミスするまで解き続ける
+        </p>
 
         <div className="menu-grid">
           <MenuButton
