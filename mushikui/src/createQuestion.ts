@@ -116,58 +116,53 @@ export function createQuestion(correctCount: number): Question {
 export function createQuestionByLevel(level: number): Question {
   let types: QuestionType[];
 
-  if (level === 1) {
-    types = ["oneDigitAdd", "oneDigitSub"];
-  } else {
-    const isAddSub = Math.random() < 0.5;
-
-    if (isAddSub) {
+  switch (level) {
+    case 1:
       types = ["oneDigitAdd", "oneDigitSub"];
+      break;
 
-      if (level >= 3) {
-        types.push("twoDigitAddOneDigit", "twoDigitSubOneDigit");
-      }
-
-      if (level >= 5) {
-        types.push(
-          "twoDigitAddTwoDigitNoCarry",
-          "twoDigitSubTwoDigitNoBorrow"
-        );
-      }
-
-      if (level >= 6) {
-        types.push(
-          "twoDigitAddTwoDigitCarry",
-          "twoDigitSubTwoDigitBorrow"
-        );
-      }
-
-      if (level >= 8) {
-        types.push("twoDigitAddTwoDigitAny", "threeDigitSubTwoDigit");
-      }
-    } else {
+    case 2:
       types = ["oneDigitMul", "oneDigitDiv"];
+      break;
 
-      if (level >= 4) {
-        types.push("twoDigitMulOneDigit", "twoDigitDivOneDigit");
-      }
+    case 3:
+      types = ["twoDigitAddOneDigit", "twoDigitSubOneDigit"];
+      break;
 
-      if (level >= 7) {
-        types.push("twoDigitMulOneDigitFull", "threeDigitDivOneDigit");
-      }
+    case 4:
+      types = ["twoDigitMulOneDigit", "twoDigitDivOneDigit"];
+      break;
 
-      if (level >= 9) {
-        types.push("teenMulTenToThirty", "teenDivTenToThirty");
-      }
+    case 5:
+      types = ["twoDigitAddTwoDigitNoCarry", "twoDigitSubTwoDigitNoBorrow"];
+      break;
 
-      if (level >= 10) {
-        types.push("twoDigitMulTwoDigitUnder1000", "threeDigitDivTwoDigit");
-      }
+    case 6:
+      types = ["twoDigitAddTwoDigitCarry", "twoDigitSubTwoDigitBorrow"];
+      break;
 
-      if (level >= 11) {
-        types.push("twoDigitMulTwoDigitFull", "fourDigitDivTwoDigit");
-      }
-    }
+    case 7:
+      types = ["twoDigitMulOneDigitFull", "threeDigitDivOneDigit"];
+      break;
+
+    case 8:
+      types = ["twoDigitAddTwoDigitAny", "threeDigitSubTwoDigit"];
+      break;
+
+    case 9:
+      types = ["teenMulTenToThirty", "teenDivTenToThirty"];
+      break;
+
+    case 10:
+      types = ["twoDigitMulTwoDigitUnder1000", "threeDigitDivTwoDigit"];
+      break;
+
+    case 11:
+      types = ["twoDigitMulTwoDigitFull", "fourDigitDivTwoDigit"];
+      break;
+
+    default:
+      types = ["oneDigitAdd"];
   }
 
   const type = pick(types);
