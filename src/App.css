@@ -735,7 +735,7 @@ button:active {
 
   .game-center:not(:has(.monster-area)) {
     align-content: center;
-    padding-bottom: clamp(42px, 8dvh, 72px);
+    padding-bottom: clamp(68px, 11dvh, 104px);
     box-sizing: border-box;
   }
 
@@ -769,6 +769,15 @@ button:active {
     align-items: flex-start;
   }
 
+  .game-center:not(:has(.monster-area)) .game-info {
+    align-items: center;
+    transform: translateY(clamp(14px, 3dvh, 28px));
+  }
+
+  .game-center:not(:has(.monster-area)) .timer {
+    font-size: clamp(36px, min(10vw, 6dvh), 50px);
+  }
+
   .monster-area {
     position: relative;
     width: min(68vw, 270px);
@@ -797,16 +806,16 @@ button:active {
   }
 
   .question {
-    font-size: clamp(30px, min(9.5vw, 5.3dvh), 40px);
+    font-size: clamp(34px, min(10.5vw, 5.8dvh), 46px);
     letter-spacing: clamp(0px, 0.5vw, 3px);
     margin-top: 0;
     line-height: 1.12;
   }
 
   .input {
-    font-size: clamp(28px, min(8vw, 4.6dvh), 36px);
-    width: clamp(108px, 30vw, 150px);
-    min-height: clamp(34px, 5.2dvh, 44px);
+    font-size: clamp(30px, min(8.8vw, 5dvh), 40px);
+    width: clamp(118px, 32vw, 160px);
+    min-height: clamp(38px, 5.6dvh, 48px);
     margin: clamp(12px, 2dvh, 18px) 0 0;
   }
 
@@ -866,8 +875,8 @@ button:active {
 
   .input {
     margin: clamp(12px, 2dvh, 18px) 0 0;
-    min-height: clamp(34px, 5.2dvh, 44px);
-    line-height: clamp(34px, 5.2dvh, 44px);
+    min-height: clamp(38px, 5.6dvh, 48px);
+    line-height: clamp(38px, 5.6dvh, 48px);
   }
 
   .score-box {
@@ -877,7 +886,7 @@ button:active {
 
   .correct,
   .miss {
-    font-size: clamp(28px, min(8vw, 4.8dvh), 38px);
+    font-size: clamp(32px, min(9vw, 5.2dvh), 42px);
   }
 
   .screen {
