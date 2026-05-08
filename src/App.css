@@ -205,6 +205,10 @@ body {
   overflow: hidden;
 }
 
+.course-select-screen {
+  justify-content: center;
+}
+
 .timer {
   font-size: clamp(28px, min(7vw, 6dvh), 50px);
   font-weight: 400;
@@ -889,6 +893,12 @@ button:active {
     justify-content: center;
     padding-top: clamp(48px, 8dvh, 72px);
     padding-bottom: clamp(48px, 8dvh, 72px);
+  }
+
+  .course-select-screen {
+    justify-content: center;
+    padding-top: clamp(56px, 9dvh, 72px);
+    padding-bottom: clamp(32px, 6dvh, 56px);
   }
 
   .countdown-screen {

@@ -278,7 +278,7 @@ export default function App() {
     const timeCourses = courses.filter((course) => course.id !== "practice");
 
     return (
-      <main className="screen">
+      <main className="screen course-select-screen">
         <h1>Time Attack</h1>
 
         <div className="menu-grid">
@@ -328,7 +328,7 @@ export default function App() {
 
   if (screen === "how-to") {
     return (
-      <main className="screen">
+      <main className="screen course-select-screen">
         <button
           className="back-button"
           onClick={() => setScreen("home")}
@@ -361,7 +361,7 @@ export default function App() {
 
   if (!game.isPlaying && screen === "survival-select") {
     return (
-      <main className="screen">
+      <main className="screen course-select-screen">
         <h1>サバイバル</h1>
 
         <p className="mode-desc">
