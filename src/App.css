@@ -69,13 +69,16 @@ body {
   margin-bottom: clamp(4px, 1dvh, 16px);
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-shrink: 1;
 }
 
 .question-area {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 0;
 }
 
 .top {
@@ -98,6 +101,8 @@ body {
   letter-spacing: clamp(1px, 0.8vw, 6px);
   margin-top: clamp(4px, 1.5dvh, 20px);
   line-height: 1.05;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .input {
@@ -697,77 +702,93 @@ button:active {
 @media (max-width: 768px) {
   .game-screen {
     height: 100dvh;
-    padding: clamp(44px, 7dvh, 56px) 12px clamp(8px, 2dvh, 16px);
+    padding: clamp(42px, 6dvh, 52px) 12px max(8px, env(safe-area-inset-bottom));
     box-sizing: border-box;
     justify-content: space-between;
   }
 
   .game-center {
     height: 100%;
-    flex: 1;
-    justify-content: center;
-    gap: clamp(6px, 1.2dvh, 12px);
+    min-height: 0;
+    display: grid;
+    grid-template-rows:
+      minmax(0, clamp(140px, 26dvh, 240px))
+      minmax(0, auto)
+      auto
+      auto;
+    align-content: end;
+    justify-items: center;
+    gap: clamp(4px, 1dvh, 10px);
   }
 
   .mobile-keypad {
     position: static;
     transform: none;
 
-    flex-shrink: 0;
-
     width: 100%;
     max-width: 100%;
-    margin-top: clamp(8px, 2dvh, 20px);
+    margin-top: clamp(4px, 1dvh, 10px);
     margin-bottom: 0;
 
-    padding: clamp(6px, 1.4dvh, 8px);
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    padding: clamp(4px, 1dvh, 8px) clamp(4px, 1vw, 8px) 0;
 
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(4, clamp(42px, 8dvh, 54px));
-    gap: clamp(6px, 1.2dvh, 8px);
+    grid-template-rows: repeat(4, clamp(42px, 7dvh, 54px));
+    gap: clamp(6px, 1dvh, 8px);
   }
 
   .mobile-keypad button {
-    height: clamp(42px, 8dvh, 54px);
+    height: clamp(42px, 7dvh, 54px);
     font-size: clamp(18px, min(5vw, 3dvh), 20px);
+  }
+
+  .game-info {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0;
+    overflow: visible;
   }
 
   .monster-area {
     position: relative;
-    width: min(82vw, 320px);
+    width: min(58vw, 230px);
+    max-height: 100%;
     margin-top: 0 !important;
-    margin-bottom: clamp(4px, 1dvh, 10px);
+    margin-bottom: 0;
   }
 
   .monster-big {
     width: 100%;
-    max-height: min(32dvh, 230px);
+    max-height: min(22dvh, 210px);
     object-fit: contain;
     display: block;
   }
 
   .hp-bar {
-    left: 0;
-    width: 100%;
-    bottom: -8px;
+    left: 50%;
+    width: min(78vw, 320px);
+    transform: translateX(-50%);
+    bottom: -6px;
   }
 
   .monster-timer {
-    font-size: clamp(24px, min(8vw, 5dvh), 28px);
+    font-size: clamp(24px, min(8vw, 4.8dvh), 34px);
     top: -6px;
   }
 
   .question {
-    font-size: clamp(28px, min(10vw, 5.5dvh), 38px);
-    margin-top: clamp(2px, 1dvh, 8px);
+    font-size: clamp(26px, min(8.5vw, 4.8dvh), 34px);
+    letter-spacing: clamp(0px, 0.4vw, 2px);
+    margin-top: 0;
+    line-height: 1;
   }
 
   .input {
-    font-size: clamp(24px, min(8vw, 4.5dvh), 30px);
-    min-height: clamp(30px, 5dvh, 34px);
-    margin: clamp(4px, 1dvh, 6px) 0;
+    font-size: clamp(24px, min(7vw, 4dvh), 30px);
+    width: clamp(88px, 24vw, 128px);
+    min-height: clamp(26px, 4.4dvh, 34px);
+    margin: clamp(6px, 1dvh, 10px) 0 0;
   }
 
   .app-container {
@@ -821,18 +842,23 @@ button:active {
   }
 
   .question {
-    margin-bottom: clamp(4px, 1.4dvh, 10px);
+    margin-bottom: 0;
   }
 
   .input {
-    margin: clamp(6px, 1.4dvh, 10px) 0 clamp(8px, 2dvh, 18px);
-    min-height: clamp(34px, 6dvh, 42px);
-    line-height: clamp(34px, 6dvh, 42px);
+    margin: clamp(6px, 1dvh, 10px) 0 0;
+    min-height: clamp(28px, 4.5dvh, 36px);
+    line-height: clamp(28px, 4.5dvh, 36px);
   }
 
   .score-box {
-    margin-top: clamp(4px, 1.4dvh, 10px);
+    margin-top: 0;
     gap: clamp(16px, 6vw, 24px);
+  }
+
+  .correct,
+  .miss {
+    font-size: clamp(24px, min(7vw, 4.4dvh), 34px);
   }
 
   .screen {
@@ -842,6 +868,12 @@ button:active {
     overflow-y: auto;
     padding: clamp(56px, 9dvh, 72px) 16px clamp(18px, 4dvh, 24px);
     box-sizing: border-box;
+  }
+
+  .home-screen {
+    justify-content: center;
+    padding-top: clamp(48px, 8dvh, 72px);
+    padding-bottom: clamp(48px, 8dvh, 72px);
   }
 
   .challenge-list {

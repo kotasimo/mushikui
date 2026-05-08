@@ -303,7 +303,7 @@ export default function App() {
 
   if (!game.isPlaying && screen === "home") {
     return (
-      <main className="screen">
+      <main className="screen home-screen">
         <h1>虫食い算</h1>
 
         <button className="howto-button" onClick={() => setScreen("how-to")}>
