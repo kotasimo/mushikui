@@ -37,7 +37,7 @@ export function GameScreen({
 
   return (
     <main className="game-screen">
-      {countdown !== null && (
+      {countdown != null && (
         <div className="countdown">
           {countdown === 0 ? "START" : countdown}
         </div>

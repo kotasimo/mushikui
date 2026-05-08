@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createQuestion, type Question } from "./createQuestion";
 import type { Course } from "./courses";
+import type { AnswerLog } from "./components/types";
 
 const BEST_SCORES_KEY = "mushikui_best_score";
 
@@ -15,12 +16,13 @@ export function useMushikuiGame() {
   const [course, setCourse] = useState<Course | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isNewBest, setIsNewBest] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [answerLogs, setAnswerLogs] = useState<AnswerLog[]>([]);
 
   const [bestScores, setBestScores] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem(BEST_SCORES_KEY);
     return saved ? JSON.parse(saved) : {};
   });
-
   const bestScore = course ? bestScores[course.id] ?? 0 : 0;
 
   // --- start ---
@@ -31,11 +33,29 @@ export function useMushikuiGame() {
     setMissCount(0);
     setInput("");
     setIsFinished(false);
-    setQuestion(createQuestion(0, selectedCourse));
-
+    setQuestion(createQuestion(0));
+    setAnswerLogs([]);
     setCountdown(3);
     setIsPlaying(false);
     setIsNewBest(false);
+    setIsPaused(false);
+  }
+
+  function deleteOne() {
+    setInput((prev) => prev.slice(0, -1));
+  }
+
+  function togglePause() {
+    if (!isPlaying || isFinished) return;
+    setIsPaused((prev) => !prev);
+  }
+
+  function pauseGame() {
+    setIsPaused(true);
+  }
+
+  function resumeGame() {
+    setIsPaused(false);
   }
 
   // --- 入力 ---
@@ -52,11 +72,24 @@ export function useMushikuiGame() {
     if (Number(input) === question.answer) {
       const next = correctCount + 1;
       setCorrectCount(next);
-      setQuestion(createQuestion(next, course ?? undefined));
+      setQuestion(createQuestion(next));
     } else {
       setMissCount((prev) => prev + 1);
-      setQuestion(createQuestion(correctCount, course ?? undefined));
+      setQuestion(createQuestion(correctCount));
     }
+
+    const isCorrect = Number(input) === question.answer;
+
+    setAnswerLogs((prev) => [
+      ...prev,
+      {
+        question: question.text,
+        correctAnswer: question.answer,
+        userAnswer: input,
+        isCorrect,
+        level: question.level,
+      },
+    ]);
 
     setInput("");
   }
@@ -73,37 +106,32 @@ export function useMushikuiGame() {
     setIsFinished(false);
   }
 
-  function resetPractice() {
-    if (!course) return;
-
-    setTimeLeft(0); // 練習はカウントアップだから0に戻す
-    setCorrectCount(0);
-    setMissCount(0);
-    setInput("");
-    setIsFinished(false);
-    setQuestion(createQuestion(0, course));
-  }
-
   // --- キーボード ---
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (!isPlaying || isFinished) return;
 
+      if (e.key === " ") {
+        e.preventDefault();
+        setIsPaused((prev) => !prev);
+        return;
+      }
+
+      if (isPaused) return;
+
       if (/^[0-9]$/.test(e.key)) answer(e.key);
       if (e.key === "Enter") submit();
-      if (e.key === "Backspace") {
-        setInput((prev) => prev.slice(0, -1));
-      }
+      if (e.key === "Backspace") deleteOne();
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying, isFinished, input, question, correctCount]);
+  }, [isPlaying, isFinished, isPaused, input, question, correctCount]);
 
   // --- タイマー ---
   // --- タイマー ---
   useEffect(() => {
-    if (!isPlaying || isFinished || !course) return;
+    if (!isPlaying || isFinished || !course || isPaused) return;
 
     const timer = setInterval(() => {
       setTimeLeft((t) => {
@@ -124,7 +152,7 @@ export function useMushikuiGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isFinished, course]);
+  }, [isPlaying, isFinished, course, isPaused]);
 
   // --- ベストスコア保存 ---
   useEffect(() => {
@@ -177,6 +205,8 @@ export function useMushikuiGame() {
     course,
     countdown,
     isNewBest,
+    isPaused,
+    answerLogs,
 
     // 操作
     start,
@@ -184,6 +214,10 @@ export function useMushikuiGame() {
     submit,
     endGame,
     goHome,
-    resetPractice,
+    deleteOne,
+    togglePause,
+    pauseGame,
+    resumeGame,
+    
   };
 }

@@ -1,10 +1,62 @@
 import "./App.css";
 import { courses } from "./courses";
 import { useMushikuiGame } from "./useGame";
-import { NewBestScreen } from "./components/bestScreen";
+import { useSurvivalGame } from "./suvival";
+import { TimerCircle } from "./components/TimerCircle";
+import { useState, useEffect } from "react";
+import { useChallengeGame } from "./useChallenge";
+import { challengeCourses } from "./challenge";
+import { ResultScreen } from "./components/result";
+import { GameScreen } from "./components/gamescreen";
+import { TimerView } from "./components/TimeView";
+import { MenuButton } from "./components/MenuButton";
+import { AnswerLogScreen } from "./components/AnswerLogScreen";
+import { AnswerLogTable } from "./components/AnswerLogTable";
+import { monsters } from "./monster";
 
 export default function App() {
+  const survival = useSurvivalGame();
   const game = useMushikuiGame();
+  const challenge = useChallengeGame();
+
+  const [screen, setScreen] = useState<
+    | "home"
+    | "time-select"
+    | "survival-select"
+    | "challenge-select"
+    | "survival-log"
+    | "game-log"
+    | "challenge-log"
+    | "practice-log"
+    | "how-to"
+  >("home");
+  const [flashMiss, setFlashMiss] = useState(false);
+  const [isHit, setIsHit] = useState(false);
+
+  function handleGameNumber(n: number) {
+    game.answer(String(n));
+  }
+
+  function handleSurvivalNumber(n: number) {
+    survival.answer(String(n));
+  }
+
+  useEffect(() => {
+    if (survival.missCount === 0) return;
+
+    setFlashMiss(true);
+    const t = setTimeout(() => {
+      setFlashMiss(false);
+    }, 150); // 一瞬
+    return () => clearTimeout(t);
+  }, [survival.missCount]);
+
+  useEffect(() => {
+    if (challenge.correctCount === 0) return;
+
+    setIsHit(true);
+    setTimeout(() => setIsHit(false), 180);
+  }, [challenge.correctCount]);
 
   if (game.countdown !== null) {
     return (
@@ -14,86 +66,416 @@ export default function App() {
     );
   }
 
-  if (game.isFinished && game.isNewBest && game.course) {
+  if (survival.countdown !== null) {
     return (
-      <NewBestScreen
-        score={game.correctCount}
-        onRetry={() => game.start(game.course!)}
-        onHome={game.goHome}
+      <main className="screen">
+        <div className="countdown">{survival.countdown}</div>
+      </main>
+    );
+  }
+
+
+  if (challenge.countdown !== null) {
+    return (
+      <main className="screen">
+        <div className="countdown">{challenge.countdown}</div>
+      </main>
+    );
+  }
+
+
+  if (screen === "survival-log") {
+    return (
+      <AnswerLogScreen
+        logs={survival.answerLogs}
+        onBack={() => setScreen("home")}
       />
+    );
+  }
+
+  if (screen === "game-log") {
+    return (
+      <AnswerLogScreen
+        logs={game.answerLogs}
+        onBack={() => setScreen("home")}
+      />
+    );
+  }
+
+  if (screen === "challenge-log") {
+    return (
+      <AnswerLogScreen
+        logs={challenge.answerLogs}
+        onBack={() => setScreen("home")}
+      />
+    );
+  }
+
+  if (screen === "practice-log") {
+    return (
+      <AnswerLogScreen
+        logs={game.answerLogs}
+        onBack={() => {
+          game.resumeGame();
+          setScreen("home");
+        }}
+      />
+    );
+  }
+
+
+  if (survival.isPlaying) {
+    return (
+      <GameScreen
+        question={survival.question?.text}
+        input={survival.input}
+        correct={survival.correctCount}
+        miss={survival.missCount}
+        onFinish={survival.endGame}
+        onNumber={handleSurvivalNumber}
+        onDelete={survival.deleteOne}
+        onSubmit={survival.submit}
+        togglePause={survival.togglePause}
+        isPaused={survival.isPaused}
+        flashMiss={flashMiss}
+      >
+        <TimerCircle
+          timeLeftMs={survival.timeLeftMs}
+          totalTimeMs={survival.answerTimeMs}
+        />
+      </GameScreen>
+    );
+  }
+
+  const challengeLevel =
+    challenge.currentCourse?.levels[
+    challenge.currentCourse.levels.length - 1
+    ];
+
+  const monster = challengeLevel !== undefined
+    ? monsters[challengeLevel]
+    : undefined;
+
+  if (challenge.isPlaying || challenge.countdown !== null) {
+    return (
+      <GameScreen
+        question={challenge.question?.text}
+        input={challenge.input}
+        correct={challenge.correctCount}
+        miss={challenge.missCount}
+        onFinish={challenge.endGame}
+        onNumber={challenge.answer}
+        onDelete={challenge.deleteOne}
+        onSubmit={challenge.submit}
+        togglePause={challenge.togglePause}
+        isPaused={challenge.isPaused}
+        flashMiss={flashMiss}
+        countdown={challenge.countdown}
+      >
+        {/* 👇 ここが children */}
+        <div className={`monster-area ${isHit ? "monster-hit" : ""}`}>
+          {/* タイマー（上に重ねる） */}
+          <div className="monster-timer">{challenge.timeLeft}s</div>
+
+          {/* モンスター */}
+          <img src={monster} className="monster-big" />
+
+          {/* HP（下に重ねる） */}
+          <div className="hp-bar">
+            <div
+              className="hp-fill"
+              style={{
+                width: `${challenge.currentCourse
+                  ? (challenge.remaining /
+                    challenge.currentCourse.questionCount) *
+                  100
+                  : 100
+                  }%`,
+              }}
+            />
+          </div>
+        </div>
+      </GameScreen>
+    );
+  }
+
+  if (survival.isFinished) {
+    return (
+      <ResultScreen
+        onRetry={survival.startGame}
+        onHome={() => {
+          survival.goHome();
+          setScreen("home");
+        }}
+      >
+        <div className="result-score-main">
+          {survival.correctCount}
+        </div>
+
+        <div className="result-best">
+          Best {survival.bestScore}
+        </div>
+
+        <AnswerLogTable logs={survival.answerLogs} />
+      </ResultScreen>
     );
   }
 
   if (game.isFinished) {
     return (
+      <ResultScreen
+        onRetry={game.course ? () => game.start(game.course!) : undefined}
+        onHome={() => {
+          game.goHome();
+          setScreen("home");
+        }}
+      >
+        <div className="result-score-main">
+          {game.correctCount}
+        </div>
+
+        <div className="result-best">
+          Best {game.bestScore}
+        </div>
+
+        <AnswerLogTable logs={game.answerLogs} />
+      </ResultScreen>
+    );
+  }
+
+
+
+  if (challenge.isFinished) {
+    const clearTime =
+      challenge.currentCourse
+        ? challenge.currentCourse.timeLimit - challenge.timeLeft
+        : 0;
+
+    return (
+      <ResultScreen
+        title={challenge.remaining === 0 ? "クリア" : "失敗"}
+        timeText={`${clearTime}s`}
+        onRetry={() => {
+          if (challenge.currentCourse) {
+            challenge.startGame(challenge.currentCourse);
+          }
+        }}
+        onCourses={() => {
+          challenge.goHome();
+          setScreen("challenge-select");
+        }}
+        onHome={() => {
+          challenge.goHome();
+          setScreen("home");
+        }}
+      >
+        <AnswerLogTable logs={challenge.answerLogs} />
+      </ResultScreen>
+    );
+  }
+
+  if (!game.isPlaying && screen === "time-select") {
+    const timeCourses = courses.filter((course) => course.id !== "practice");
+
+    return (
       <main className="screen">
-        <h1>結果</h1>
-        <div className="score">{game.correctCount} 問</div>
-        <div className="miss">{game.missCount} 問ミス</div>
+        <h1>Time Attack</h1>
 
-        {game.course && (
-          <button onClick={() => game.start(game.course!)}>もう一回</button>
-        )}
+        <div className="menu-grid">
+          {timeCourses.map((course) => {
+            const best = game.bestScores[course.id] ?? 0;
 
-        <button onClick={game.goHome}>ホーム</button>
+            return (
+              <MenuButton
+                key={course.id}
+                label={course.label}
+                info={`Best: ${best}`}
+                onClick={() => game.start(course)}
+              />
+            );
+          })}
+        </div>
+
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
       </main>
     );
   }
 
-  if (!game.isPlaying) {
+  if (!game.isPlaying && screen === "home") {
     return (
       <main className="screen">
         <h1>虫食い算</h1>
+
+        <button className="howto-button" onClick={() => setScreen("how-to")}>
+          how
+        </button>
+
         <div className="menu-grid">
-          {courses.map((course) => {
-            const best = game.bestScores[course.id] ?? 0;
+          <MenuButton label="タイム" onClick={() => setScreen("time-select")} />
+
+          <MenuButton label="サバイバル" onClick={() => setScreen("survival-select")} />
+
+          <MenuButton label="Challenge" onClick={() => setScreen("challenge-select")} />
+
+          <MenuButton
+            label="練習"
+            onClick={() => game.start(courses.find((c) => c.id === "practice")!)}
+          />
+        </div>
+      </main >
+    );
+  }
+
+  if (screen === "how-to") {
+    return (
+      <main className="screen">
+        <button
+          className="back-button"
+          onClick={() => setScreen("home")}
+        >
+          Home
+        </button>
+
+        <div className="how-to">
+          <h1>あそびかた</h1>
+
+          <h2>虫食い算とは？</h2>
+          <p>
+            □に入る数字を見つけるゲーム
+          </p>
+
+          <h2>モード</h2>
+          <p><b>タイム</b>：制限時間内に、どこまで解けるか。</p>
+          <p><b>サバイバル</b>：ミスと時間との勝負。どこまで生き残れる？</p>
+          <p><b>Challenge</b>：問題を解いてモンスターを削る。30問で撃破。</p>
+          <p><b>Practice</b>：好きなだけ練習。</p>
+
+          <h2>操作</h2>
+          <p>数字を入力して、Enterで答える。</p>
+          <p>Backspaceで1文字消す。</p>
+          <p>Spaceで一時停止。</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!game.isPlaying && screen === "survival-select") {
+    return (
+      <main className="screen">
+        <h1>サバイバル</h1>
+
+        <p className="mode-desc">
+          数字は「1問あたりの制限時間（秒）」を表します。
+          3回ミスするまで解き続ける
+        </p>
+
+        <div className="menu-grid">
+          <MenuButton
+            label="10s"
+            info={`Best: ${survival.getBestScore(10000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(10000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
+
+          <MenuButton
+            label="5s"
+            info={`Best: ${survival.getBestScore(5000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(5000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
+
+          <MenuButton
+            label="3s"
+            info={`Best: ${survival.getBestScore(3000)}`}
+            onClick={() => {
+              survival.setAnswerTimeMs(3000);
+              survival.startGame();
+              setScreen("home");
+            }}
+          />
+        </div>
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
+      </main>
+    );
+  }
+
+  if (!game.isPlaying && screen === "challenge-select") {
+    return (
+      <main className="screen">
+        <h1>Challenge</h1>
+
+        <div className="challenge-list">
+          {challengeCourses.map((course) => {
+            const best = challenge.getBest(course.id);
+
+            const level = course.levels[course.levels.length - 1];
+            const monster = monsters[level];
 
             return (
-              <div key={course.id} className="menu-item">
-                <button onClick={() => game.start(course)}>
-                  {course.label}
-                </button>
+              <div key={course.id} className="challenge-card">
+                <button
+                  className="challenge-card-button"
+                  onClick={() => challenge.startGame(course)}
+                >
+                  <span className="challenge-card-left">
+                    <span>{course.label}</span>
+                    <img src={monster} className="monster-icon" />
+                  </span>
 
-                {course.id !== "practice" && (
-                  <div className="best">最高: {best}問</div>
-                )}
+                  <span className="challenge-card-right">
+                    {best.cleared ? "✓" : "—"}
+                  </span>
+                </button>
               </div>
             );
           })}
         </div>
+
+        <button className="back-button" onClick={() => setScreen("home")}>Back</button>
       </main>
     );
   }
 
   return (
-    <main className="game-screen">
-      <div className="score-box">
-        <div className="score-text">
-          {game.correctCount} 正解 / {game.missCount} ミス
-        </div>
+    <GameScreen
+      question={game.question?.text}
+      input={game.input}
+      correct={game.correctCount}
+      miss={game.missCount}
+      onFinish={game.endGame}
+      onNumber={handleGameNumber}
+      onDelete={game.deleteOne}
+      onSubmit={game.submit}
+      togglePause={game.togglePause}
+      isPaused={game.isPaused}
+      flashMiss={flashMiss}
+    >
+      <TimerView
+        timeLeft={game.timeLeft}
+        count={
+          game.course?.id === "practice"
+            ? game.correctCount + game.missCount
+            : undefined
+        }
+      />
 
-        {game.course?.id === "practice" && (
-          <button className="reset-btn" onClick={game.resetPractice}>
-            ↺
-          </button>
-        )}
-      </div>
-
-      <div className="game-center">
-        {game.course?.id === "practice" ? (
-          <div className="timer">
-            <span>{game.timeLeft}秒</span>
-            <span>{game.correctCount + game.missCount}問</span>
-          </div>
-        ) : (
-          <div>{game.timeLeft} 秒</div>
-        )}
-
-        <div className="question">{game.question?.text}</div>
-        <div className="input">{game.input || ""}</div>
-
-        <button onClick={game.endGame}>終了</button>
-      </div>
-    </main>
+      {game.course?.id === "practice" && (
+        <button
+          className="history-button"
+          onClick={() => {
+            game.pauseGame();
+            setScreen("practice-log");
+          }}
+        >
+          履歴
+        </button>
+      )}
+    </GameScreen>
   );
 }
