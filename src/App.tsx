@@ -60,7 +60,7 @@ export default function App() {
 
   if (game.countdown !== null) {
     return (
-      <main className="screen">
+      <main className="screen countdown-screen">
         <div className="countdown">{game.countdown}</div>
       </main>
     );
@@ -68,7 +68,7 @@ export default function App() {
 
   if (survival.countdown !== null) {
     return (
-      <main className="screen">
+      <main className="screen countdown-screen">
         <div className="countdown">{survival.countdown}</div>
       </main>
     );
@@ -77,7 +77,7 @@ export default function App() {
 
   if (challenge.countdown !== null) {
     return (
-      <main className="screen">
+      <main className="screen countdown-screen">
         <div className="countdown">{challenge.countdown}</div>
       </main>
     );
